@@ -1,23 +1,90 @@
 import { useState, useEffect } from 'preact/hooks';
 import { THEMES, DEFAULT_THEME, applyTheme } from '../data/themes.js';
 import { Updater, APK_URL, currentBuild, latestBuild } from '../data/update.js';
-import { TopBar, BackBar, go, ls, toast, APP } from '../ui.jsx';
+import { BackBar, go, ls, toast, APP } from '../ui.jsx';
+import { fmtShort, dmy } from '../data/games.js';
+import { Avatar, AVATAR_THEMES } from '../social/avatars.jsx';
+import { Sheet } from '../social/Sheet.jsx';
+import { PostCard, WinBadge, Composer, useSocial } from './Community.jsx';
+import { me, userInfo, winStats, followingOf, followersOf, toggleFollow, userPosts, visible, savedPosts, myLucky, myPicks, matchSets, postedToday, renameMe, setAvatar, validName, NAME_EDITS, NAME_MAX, AVATAR_EDITS } from '../social/store.js';
 
-export function Profile() {
-  const lucky = ls.get('nk_lucky', []);
+function AvatarPicker({ current, onClose, left }) {
+  const [th, setTh] = useState(Math.floor(current / 100) % 10);
+  return (
+    <Sheet title="Choose your sticker" onClose={onClose}>
+      <div class="meta" style="margin-bottom:8px">Avatar changes left: {left}</div>
+      <div class="qchips scroll">{AVATAR_THEMES.map((a, i) => <button key={a.name} class={th === i ? 'qchip on sm' : 'qchip sm'} onClick={() => setTh(i)}>{a.name}</button>)}</div>
+      <div class="qav-grid">{Array.from({ length: 100 }, (_, k) => th * 100 + k).map((id) => (
+        <button key={id} class={id === current ? 'qav-pick on' : 'qav-pick'} aria-label={`Avatar ${id + 1}`} onClick={() => { const r = setAvatar(id); if (r.error) { toast(r.error); return; } onClose(); }}><Avatar id={id} size={50} /></button>
+      ))}</div>
+    </Sheet>
+  );
+}
+function NameSheet({ user, onClose }) {
+  const [v, setV] = useState(user.name); const [err, setErr] = useState('');
+  const left = NAME_EDITS - (user.nameEdits || 0);
+  const save = () => { const r = renameMe(v); if (r.error) { setErr(r.error); return; } toast('Name updated'); onClose(); };
+  return (
+    <Sheet title="Edit name" onClose={onClose}>
+      <div class="meta" style="margin-bottom:8px;line-height:1.5">Letters only, up to {NAME_MAX} characters. No numbers, emoji or symbols. Changes left: {left}</div>
+      <input class="qinput" value={v} maxLength={NAME_MAX} autocomplete="off" onInput={(e) => { const c = e.currentTarget.value.replace(/[^\p{L}\p{M} ]/gu, '').slice(0, NAME_MAX); e.currentTarget.value = c; setV(c); }} />
+      <div class="meta" style="text-align:right;font-size:12px;margin:4px 2px 10px">{v.length}/{NAME_MAX}</div>
+      {err && <div class="qerr">{err}</div>}
+      <button class="qbtn" disabled={left <= 0 || !validName(v.trim()) || v.trim() === user.name} onClick={save}>Save name</button>
+    </Sheet>
+  );
+}
+const Gear = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg>;
+function Entry({ n, sub, sets, day }) {
+  const h = matchSets(sets || [n], day);
+  return <div class="qhit"><span class="n">{n}</span><span style="flex:1;min-width:0"><b>{sub}</b><span class="meta" style="display:block">{h == null ? 'Waiting for the result' : h.length ? `🎉 Matched ${h.map((x) => x.prize).join(', ')}` : 'Did not match'}</span></span></div>;
+}
+
+// Own profile (/profile) or another player's page (/user/:id) — social-media style, same as Q Spot 4D
+export function Profile({ uid }) {
+  useSocial();
+  const user = me();
+  const id = uid || 'me'; const own = id === 'me';
+  const u = userInfo(id); const st = winStats(id); const fl = followingOf().includes(id);
+  const [picker, setPicker] = useState(false); const [nameOpen, setNameOpen] = useState(false); const [comp, setComp] = useState(null);
+  const [tab, setTab] = useState('posts');
+  const tabs = own ? [['posts', 'Posts'], ['saved', 'Saved'], ['lucky', 'Lucky'], ['picks', 'My picks']] : [['posts', 'Posts']];
+  let body;
+  if (tab === 'posts') { const l = visible(userPosts(id)); body = l.length ? l.slice(0, 30).map((p) => <PostCard key={p.id} p={p} hideFollow onEdit={(x) => setComp({ edit: x })} />) : <div class="qpanel"><div class="empty">No posts yet.</div></div>; }
+  else if (tab === 'saved') { const l = savedPosts(); body = l.length ? l.map((p) => <PostCard key={p.id} p={p} hideOwn />) : <div class="qpanel"><div class="empty">Posts you save appear here. We check them when the result is out.</div></div>; }
+  else if (tab === 'lucky') { const l = myLucky(); body = l.length ? l.map((x) => <Entry key={x.at} n={x.n} sub={`${x.g || 'Lucky Game'} · ${x.n.length} digit`} day={x.at ? dmy(new Date(x.at + (new Date().getTimezoneOffset() + 330) * 6e4)) : ''} />) : <div class="qpanel"><div class="empty">Lucky numbers you save from the Lucky Game appear here.</div></div>; }
+  else { const l = myPicks(); body = l.length ? l.map((x) => <Entry key={x.id} n={x.sets[0]} sets={x.sets} day={x.day} sub={`Draw ${fmtShort(x.day)} · ${x.sets.join(' ')}`} />) : <div class="qpanel"><div class="empty">Predictions you save only for yourself appear here.</div></div>; }
   return (
     <div>
-      <TopBar />
-      <div class="prof"><div class="av">G</div><div><b>Guest</b><span class="meta">Sign in coming soon</span></div></div>
-      <div class="stats"><div><b>{lucky.length}</b><span>Lucky numbers</span></div><div><b>0</b><span>Votes</span></div><div><b>New</b><span>Win %</span></div></div>
-      <div class="sec"><b>My lucky numbers</b><span>{lucky.length}</span></div>
-      {lucky.length ? lucky.slice(0, 5).map((x) => <div key={x.at} class="sv"><b>{x.n}</b><span><i>{x.g}</i>{x.n.length} Digit</span></div>) : <div class="empty">Play the Lucky Game to save numbers here.</div>}
-      <div class="sec"><b>Account</b><span /></div>
-      <div class="list">
-        <button class="lr" onClick={() => go('/settings')}><span class="li2">⚙️</span><b>Settings</b><span>›</span></button>
-        <button class="lr" onClick={() => go('/notifications')}><span class="li2">🔔</span><b>Notifications</b><span>›</span></button>
-        <button class="lr" onClick={() => go('/legal/disclaimer')}><span class="li2">ⓘ</span><b>Disclaimer</b><span>›</span></button>
+      {own
+        ? <div class="bar"><div class="ttl" style="margin-left:8px;font-size:20px">Profile</div><button class="ib" aria-label="Settings" onClick={() => go('/settings')}><Gear /></button></div>
+        : <BackBar title="Player" />}
+      <div class="qwrap">
+        <div class="qpf">
+          <div class="qpf-cover" />
+          <div class="qpf-main">
+            <button class="plain qpf-av" disabled={!own} onClick={() => own && setPicker(true)} aria-label="Change avatar"><Avatar id={u.avatar} size={88} ring />{own && <i class="qpf-edit">✎</i>}</button>
+            <div class="qpf-name">{u.name}</div>
+            <div class="qpf-stats">
+              <div><b>{st.posts}</b><span>Posts</span></div>
+              <div><b>{followersOf(id)}</b><span>Followers</span></div>
+              <div><b>{own ? followingOf().length : '—'}</b><span>Following</span></div>
+              <div><b>{st.pct == null ? '—' : `${st.pct}%`}</b><span>Winning</span></div>
+            </div>
+            {st.pct == null && <div class="meta" style="font-size:12px;text-align:center">Winning % shows after 4 checked posts. Checked: {st.resolved}</div>}
+            {own
+              ? <div class="qpf-btns"><button class="qbtn ghost" onClick={() => setNameOpen(true)}>Edit profile</button><button class="qbtn" onClick={() => (postedToday() ? toast('You have already posted today. See your post below.') : setComp({}))}>Place your prediction</button></div>
+              : <button class={fl ? 'qbtn ghost' : 'qbtn'} onClick={() => toggleFollow(id)}>{fl ? 'Following' : 'Follow'}</button>}
+          </div>
+        </div>
+        <div class="qtabs" style="margin:14px 0 8px">{tabs.map(([k, l]) => <button key={k} class={tab === k ? 'qtab on' : 'qtab'} onClick={() => setTab(k)}>{l}</button>)}</div>
+        {tab === 'posts' && <div class="qsec"><h3>Posts</h3><WinBadge stats={st} /></div>}
+        {body}
+        {own && <div class="meta ctr" style="font-size:12px;margin:8px 0">Saved on this phone for now. Google sign-in comes with the online community.</div>}
       </div>
+      {picker && <AvatarPicker current={user.avatar} left={AVATAR_EDITS - (user.avatarEdits || 0)} onClose={() => setPicker(false)} />}
+      {nameOpen && <NameSheet user={user} onClose={() => setNameOpen(false)} />}
+      {comp && <Composer edit={comp.edit} onClose={() => setComp(null)} />}
     </div>
   );
 }
@@ -96,12 +163,3 @@ export function Notifications() {
   );
 }
 
-const TEXT = {
-  disclaimer: ['Disclaimer', 'This app shows Kerala lottery results collected from public sources and history-based predictions for entertainment only. Results are not official: always verify with the official Kerala Government Gazette before claiming. Predictions are probabilities, not 100% sure. We do not sell lottery tickets and do not promote any online game, betting or gambling.'],
-  privacy: ['Privacy Policy', 'Draft for testing. The app stores your lucky numbers and settings only on your phone. The full privacy policy will be added before release.'],
-  terms: ['Terms & Conditions', 'Draft for testing. Use of this app is for information and entertainment only. Full terms will be added before release.'],
-};
-export function Legal({ kind }) {
-  const [t, body] = TEXT[kind] || TEXT.disclaimer;
-  return <div><BackBar title={t} /><div class="card"><div class="in" style="line-height:1.7;font-size:13.5px">{body}</div></div></div>;
-}

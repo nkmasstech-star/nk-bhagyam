@@ -13,7 +13,8 @@ import { History3, History3Day, History4, History4Day } from './screens/History.
 import { Lucky } from './screens/Lucky.jsx';
 import { Poll } from './screens/Poll.jsx';
 import { Analytics } from './screens/Analytics.jsx';
-import { Profile, Settings, Notifications, Legal } from './screens/Profile.jsx';
+import { Profile, Settings, Notifications } from './screens/Profile.jsx';
+import { HowTo, Faq, Feedback, Legal } from './screens/Info.jsx';
 import { Menu } from './screens/Menu.jsx';
 
 function useRoute() {
@@ -90,6 +91,10 @@ export function App() {
     case 'settings': screen = <Settings />; break;
     case 'notifications': screen = <Notifications />; break;
     case 'legal': screen = <Legal kind={seg[1]} />; break;
+    case 'user': screen = <Profile uid={seg[1]} />; break;
+    case 'howto': screen = <HowTo />; break;
+    case 'faq': screen = <Faq />; break;
+    case 'feedback': screen = <Feedback />; break;
     default: screen = <Home draws={draws} ready={data.ready} sample={data.sample} onRefresh={refresh} />; nav = true;
   }
   const active = '/' + (seg[0] || 'home');

@@ -1,40 +1,65 @@
-import { useState, useEffect } from 'preact/hooks';
-import { TopBar, go } from '../ui.jsx';
-import { fmtLong, istNow, dmy, RESULT_AT, istMinutes, LIVE_START, LIVE_END } from '../data/games.js';
-import { predFor } from '../data/predictions.js';
+import { useState } from 'preact/hooks';
+import { TopBar, go, IconSearch } from '../ui.jsx';
+import { fmtLong, istNow, dmy, RESULT_AT, istMinutes, LIVE_START, LIVE_END, parseDmy } from '../data/games.js';
+import { Sheet } from '../social/Sheet.jsx';
 
-export function Home({ draws, ready, sample }) {
+const MON = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+// accepts 21, 21-11, 21/11/2026, 21 nov, nov 21, 2026-11-21, game name or code (SM-82)
+function matches(d, q) {
+  const s = q.trim().toLowerCase(); if (!s) return false;
+  if (d.name.toLowerCase().includes(s) || d.code.toLowerCase().replace('-', '').includes(s.replace(/[\s-]/g, ''))) return true;
+  const dt = parseDmy(d.date); const dd = dt.getDate(); const mm = dt.getMonth() + 1; const yy = dt.getFullYear();
+  const mon = MON.findIndex((m) => s.includes(m));
+  const nums = (s.match(/\d+/g) || []).map(Number);
+  if (s.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) return nums[0] === yy && nums[1] === mm && nums[2] === dd;
+  if (mon >= 0) return mon + 1 === mm && (nums.length === 0 || nums.includes(dd)) && (!nums.some((n) => n > 31) || nums.includes(yy));
+  if (nums.length === 1) return nums[0] === dd;
+  if (nums.length === 2) return nums[0] === dd && nums[1] === mm;
+  if (nums.length >= 3) return nums[0] === dd && nums[1] === mm && (nums[2] === yy || nums[2] === yy % 100);
+  return false;
+}
+
+function Card({ d, k, today }) {
+  const isToday = d.date === today; const m = istMinutes();
+  let tag = null;
+  if (isToday) tag = m < LIVE_START ? <span class="tag td">TODAY</span> : m <= LIVE_END ? <span class="tag lv">LIVE</span> : <span class="tag nw">NEW</span>;
+  else if (k === 1 && m < LIVE_START) tag = <span class="tag nw">NEW</span>;
+  return (
+    <button class="rcard" onClick={() => go('/result/' + d.date)}>
+      <div class="top"><span class="dchip">{fmtLong(d.date).replace(/^(\w{3})\w*,/, '$1,')}</span>{tag}</div>
+      <div class="nm">{d.name}</div>
+      <div class="meta"><span class="code">{d.code}</span>{isToday && m < LIVE_START && <span>Live {RESULT_AT}</span>}</div>
+    </button>
+  );
+}
+
+function Search({ draws, onClose }) {
+  const [q, setQ] = useState(''); const [pick, setPick] = useState('');
+  const list = pick ? draws.filter((d) => d.date === pick) : q ? draws.filter((d) => matches(d, q)) : [];
+  const onDate = (v) => { if (!v) { setPick(''); return; } const [y, m, dd] = v.split('-'); setPick(`${dd}-${m}-${y}`); setQ(''); };
+  return (
+    <Sheet title="Find a result" onClose={onClose}>
+      <input class="qinput" autofocus placeholder="Type a date, e.g. 21-11-2026 or 21 Nov" value={q} onInput={(e) => { setQ(e.currentTarget.value); setPick(''); }} />
+      <div class="meta" style="margin:10px 2px 6px">or pick from the calendar</div>
+      <input class="qinput" type="date" onInput={(e) => onDate(e.currentTarget.value)} />
+      <div class="rc" style="margin:16px 0 4px;padding:0">
+        {list.slice(0, 20).map((d) => <Card key={d.date} d={d} k={-1} today="" />)}
+      </div>
+      {(q || pick) && list.length === 0 && <div class="meta ctr" style="padding:14px">No result found for that date.</div>}
+    </Sheet>
+  );
+}
+
+export function Home({ draws, ready }) {
   const today = dmy(istNow());
-  const t = draws[0];
-  const p = predFor(today);
-  const slides = [
-    { cls: 'dk', k: "Today's draw", title: t ? `${t.name} ${t.code}` : 'Today', body: <div class="chips"><b>Result live at {RESULT_AT}</b></div>, to: t && `/result/${t.date}` },
-    { cls: '', k: '3 Digit Predictions', title: 'Last 3 digits · today', body: <div class="chips">{p.p3.map((x) => <b key={x}>{x}</b>)}</div>, to: '/p3' },
-    { cls: 'dk', k: '4 Digit Predictions', title: '₹5,000 to ₹100 prizes', body: <div class="chips">{p.list4.slice(0, 4).map((x) => <b key={x}>{x}</b>)}<b>+8</b></div>, to: '/p4' },
-    { cls: '', k: 'Lucky Game', title: 'Open the mystery boxes', body: <div class="chips"><b>🎁 Play now</b></div>, to: '/lucky' },
-  ];
+  const [find, setFind] = useState(false);
   return (
     <div>
       <TopBar />
-      <div class="sec"><b>Latest Results</b><span>{sample ? 'Sample data' : `${draws.length} draws`}</span></div>
+      <div class="sec"><b>Latest Results</b><button class="findbtn" aria-label="Search results by date" onClick={() => setFind(true)}><IconSearch /><span>Search date</span></button></div>
       {!ready && <div class="empty">Loading…</div>}
-      <div class="rc">
-        {draws.map((d, k) => {
-          const isToday = d.date === today;
-          const m = istMinutes();
-          // small tag only: today → TODAY (before draw) / LIVE (draw time) / NEW (after); yesterday → NEW until today's draw starts
-          let tag = null;
-          if (isToday) tag = m < LIVE_START ? <span class="tag td">TODAY</span> : m <= LIVE_END ? <span class="tag lv">LIVE</span> : <span class="tag nw">NEW</span>;
-          else if (k === 1 && m < LIVE_START) tag = <span class="tag nw">NEW</span>;
-          return (
-            <button key={d.date} class="rcard" onClick={() => go('/result/' + d.date)}>
-              <div class="top"><span class="dchip">{fmtLong(d.date).replace(/^(\w{3})\w*,/, '$1,')}</span>{tag}</div>
-              <div class="nm">{d.name}</div>
-              <div class="meta"><span class="code">{d.code}</span>{isToday && m < LIVE_START && <span>Live {RESULT_AT}</span>}</div>
-            </button>
-          );
-        })}
-      </div>
+      <div class="rc">{draws.map((d, k) => <Card key={d.date} d={d} k={k} today={today} />)}</div>
+      {find && <Search draws={draws} onClose={() => setFind(false)} />}
     </div>
   );
 }
