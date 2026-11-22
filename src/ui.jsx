@@ -29,7 +29,7 @@ export function TopBar() {
   return (
     <div class="bar">
       <button class="ib" aria-label="Menu" onClick={openMenu}><IconMenu /></button>
-      <div class="brand"><Logo size={36} /><div class="bt"><b class="bn">Malabar <span>Results</span></b><small>{APP.slogan}</small></div></div>
+      <div class="brand"><Logo size={36} /><div class="bt"><b class="bn">Malabar</b><small>{APP.slogan}</small></div></div>
       <button class="ib" aria-label="Notifications" onClick={() => go('/notifications')}><IconBell />{n > 0 && <i class="dot" />}</button>
     </div>
   );
