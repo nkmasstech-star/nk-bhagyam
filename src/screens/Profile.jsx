@@ -1,4 +1,6 @@
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
+import { THEMES, DEFAULT_THEME, applyTheme } from '../data/themes.js';
+import { Updater, APK_URL, currentBuild, latestBuild } from '../data/update.js';
 import { TopBar, BackBar, go, ls, toast, APP } from '../ui.jsx';
 
 export function Profile() {
@@ -20,7 +22,41 @@ export function Profile() {
   );
 }
 
+function UpdateCard() {
+  const [cur, setCur] = useState(0); const [info, setInfo] = useState(null); const [st, setSt] = useState('check'); const [pct, setPct] = useState(0); const [err, setErr] = useState('');
+  const check = async () => {
+    setSt('check'); setErr('');
+    const c = await currentBuild(); setCur(c);
+    try { const l = await latestBuild(); setInfo(l); setSt(l.build > c ? 'new' : 'ok'); } catch (e) { setSt('fail'); setErr('Could not check. Check internet.'); }
+  };
+  useEffect(() => { check(); }, []);
+  const update = async () => {
+    try {
+      const p = await Updater.canInstall();
+      if (!p.allowed) { toast('Allow "Install unknown apps" for Malabar, then tap Update again'); await Updater.openInstallSettings(); return; }
+      setSt('dl'); setPct(0);
+      const h = await Updater.addListener('progress', (e) => setPct(e.percent));
+      await Updater.downloadAndInstall({ url: APK_URL });
+      h.remove(); setSt('installing');
+    } catch (e) { setSt('new'); setErr(String(e.message || e)); }
+  };
+  const title = { check: 'Checking for update…', new: 'New update ready', ok: 'App is up to date', fail: 'Update check failed', dl: 'Downloading update…', installing: 'Tap "Update" on the next screen' }[st];
+  return (
+    <div class="upd">
+      <b>🔄 {title}</b>
+      <small>Your build: {cur || '-'}{info ? ` · Latest: ${info.build}` : ''}</small>
+      {info && st === 'new' && info.note && <small>What's new: {info.note}</small>}
+      {err && <small style="color:#FFD0D0">{err}</small>}
+      {st === 'dl' && <div class="bar2"><i style={`width:${pct}%`} /></div>}
+      {st === 'new' && <button onClick={update}>Update app</button>}
+      {(st === 'ok' || st === 'fail') && <button onClick={check}>Check again</button>}
+    </div>
+  );
+}
+
 export function Settings() {
+  const [theme, setTheme] = useState(ls.get('nk_theme', DEFAULT_THEME));
+  const pick = (id) => { setTheme(id); ls.set('nk_theme', id); applyTheme(id); window.dispatchEvent(new Event('nk-theme')); };
   const [push, setPush] = useState(ls.get('nk_push', true));
   const [sound, setSound] = useState(ls.get('nk_sound', true));
   const [lang, setLang] = useState(ls.get('nk_lang', 'en'));
@@ -28,6 +64,10 @@ export function Settings() {
   return (
     <div>
       <BackBar title="Settings" />
+      <UpdateCard />
+      <div class="list">
+        <div class="lr tcol"><b>Theme · {THEMES[theme] ? THEMES[theme].name : ''}</b><div class="themes">{Object.entries(THEMES).map(([id, t]) => <button key={id} class={theme === id ? 'on' : ''} aria-label={t.name} onClick={() => pick(id)}><i style={`background:${t.sw[0]}`} /><i style={`background:${t.sw[1]}`} /></button>)}</div></div>
+      </div>
       <div class="list">
         <div class="lr"><span class="li2">🔔</span><b>Notifications<br /><small>Results and predictions alerts</small></b><button class={push ? 'sw on' : 'sw'} onClick={() => tg('nk_push', !push, setPush)} /></div>
         <div class="lr"><span class="li2">🔊</span><b>Game sounds</b><button class={sound ? 'sw on' : 'sw'} onClick={() => tg('nk_sound', !sound, setSound)} /></div>

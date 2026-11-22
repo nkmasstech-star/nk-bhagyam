@@ -23,6 +23,8 @@ jobs:
       - run: npx cap sync android
       - run: chmod +x gradlew && ./gradlew assembleDebug
         working-directory: android
+        env:
+          BUILD_NUM: ${{ github.run_number }}
       - uses: actions/upload-artifact@v4
         with:
           name: malabar-debug-apk
@@ -32,5 +34,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk Malabar-test.apk
+          echo "{\"build\": ${{ github.run_number }}, \"note\": \"$(git log -1 --pretty=%s | head -c 140 | sed 's/\"/'"'"'/g')\"}" > version.json
+          cat version.json
           gh release delete test-apk -y --cleanup-tag || true
-          gh release create test-apk Malabar-test.apk --title "Test APK" --notes "Latest debug build" --prerelease
+          gh release create test-apk Malabar-test.apk version.json --title "Test APK" --notes "Latest debug build" --prerelease
