@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+def buildNum = (System.getenv("BUILD_NUM") ?: "1").toInteger()
+
 android {
     namespace = "com.nkbhagyam.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -8,8 +10,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // build number comes from GitHub Actions so every test build can update the installed app
-        versionCode (System.getenv("BUILD_NUM") ?: "1") as int
-        versionName "0.1." + (System.getenv("BUILD_NUM") ?: "1")
+        versionCode buildNum
+        versionName "0.1." + buildNum
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
