@@ -4,6 +4,8 @@ import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
+import '@fontsource/cinzel/700.css';
+import '@fontsource/cinzel/900.css';
 import './styles.css';
 import { App } from './App.jsx';
 render(<App />, document.getElementById('app'));

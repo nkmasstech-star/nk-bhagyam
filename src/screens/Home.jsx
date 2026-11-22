@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import { TopBar, go } from '../ui.jsx';
-import { fmtShort, istNow, dmy, RESULT_AT, istMinutes, LIVE_START, LIVE_END } from '../data/games.js';
+import { fmtLong, istNow, dmy, RESULT_AT, istMinutes, LIVE_START, LIVE_END } from '../data/games.js';
 import { predFor } from '../data/predictions.js';
 
 export function Home({ draws, ready, sample }) {
@@ -26,7 +26,7 @@ export function Home({ draws, ready, sample }) {
         ))}
         <div class="dots">{slides.map((_, k) => <i key={k} class={k === i ? 'on' : ''} />)}</div>
       </div>
-      <div class="sec"><b>Latest Results</b><span>{sample ? 'Sample data' : 'Last 30 days'}</span></div>
+      <div class="sec"><b>Latest Results</b><span>{sample ? 'Sample data' : `${draws.length} draws`}</span></div>
       {!ready && <div class="empty">Loading…</div>}
       <div class="rc">
         {draws.map((d, k) => {
@@ -38,8 +38,9 @@ export function Home({ draws, ready, sample }) {
           else if (k === 1 && m < LIVE_START) tag = <span class="tag">NEW</span>;
           return (
             <button key={d.date} class="rcard" onClick={() => go('/result/' + d.date)}>
-              <div class="top"><span class="mono">{d.code.split('-')[0]}</span>{tag}</div>
-              <div><div class="nm">{d.name}</div><div class="meta"><span>{isToday && m < LIVE_START ? `Live ${RESULT_AT}` : fmtShort(d.date)}</span><span class="ser">{d.code}</span></div></div>
+              <div class="top"><span class="dchip">{fmtLong(d.date).replace(/^(\w{3})\w*,/, '$1,')}</span>{tag}</div>
+              <div class="nm">{d.name}</div>
+              <div class="meta"><span class="code">{d.code}</span>{isToday && m < LIVE_START && <span>Live {RESULT_AT}</span>}</div>
             </button>
           );
         })}

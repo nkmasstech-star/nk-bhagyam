@@ -41,13 +41,13 @@ function parseDrawList(html) {
 
 export async function loadDraws() {
   const cached = store.get('nk_draws');
-  if (!isNative()) return { draws: mergeToday(dummyDraws()), sample: true };
+  if (!isNative()) return { draws: mergeToday(dummyDraws(90)), sample: true };
   try {
     const list = parseDrawList(await getHtml(MAIN));
-    if (list.length) { store.set('nk_draws', list); return { draws: mergeToday(list.slice(0, 31)), sample: false }; }
+    if (list.length) { store.set('nk_draws', list); return { draws: mergeToday(list), sample: false }; }
   } catch (e) { /* fall through */ }
-  if (cached) return { draws: mergeToday(cached.slice(0, 31)), sample: false };
-  return { draws: mergeToday(dummyDraws()), sample: true };
+  if (cached) return { draws: mergeToday(cached), sample: false };
+  return { draws: mergeToday(dummyDraws(90)), sample: true };
 }
 
 // make sure today's draw card exists from 12 AM even before the site posts it
