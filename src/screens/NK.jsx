@@ -2,15 +2,17 @@ import { useState } from 'preact/hooks';
 import { TopBar, BackBar, Hero, Disclaimer, go } from '../ui.jsx';
 import { fmtShort, fmtLong, istNow, dmy } from '../data/games.js';
 import { firstPrizeTail } from '../data/results.js';
+import { IcGrid3, IcBars, IcCal, IcBox, IcVote, IcGift } from './icons2.jsx';
 
 const CARDS = [
-  ['/p3', '3D', '3 Digit Guessing', 'ABC board, all board, box & picks', ''],
-  ['/freq', '📊', 'Result Frequency', 'Most common digits in the 1st prize', ''],
-  ['/monthly', '🗓', 'Monthly Chart', '1st prize of the last 30 draws', ''],
-  ['/box', '🎲', 'Box Creator', 'Make every order of your digits', ''],
-  ['/poll', '🗳', 'Voting Numbers', 'Vote A, B, C digits', ''],
-  ['/lucky', '🎁', 'Lucky Number Generator', 'Open boxes for your number', ''],
+  ['/p3', IcGrid3, '3 Digit Guessing'],
+  ['/freq', IcBars, 'Result Frequency'],
+  ['/monthly', IcCal, 'Monthly Chart'],
+  ['/box', IcBox, 'Box Creator'],
+  ['/poll', IcVote, 'Voting Numbers'],
+  ['/lucky', IcGift, 'Lucky Number Generator'],
 ];
+export const HubTile = ({ to, Ic, h }) => <button class="htile" onClick={() => go(to)}><span class="hti"><Ic /></span><h3>{h}</h3></button>;
 
 // NK tab: hub of cards
 export function NKHome({ draws }) {
@@ -20,7 +22,7 @@ export function NKHome({ draws }) {
       <TopBar />
       <div class="nkban"><img src="./nk-logo.png" alt="NK Guessing" /><div><b>NK Guessing</b><span>Analysis &amp; Predictions</span></div></div>
       <div class="tiles">
-        {CARDS.map(([to, ic, h, p, cls]) => <button key={to} class={'tile ' + cls} onClick={() => go(to)}><span class="ti">{ic}</span><div><h3>{h}</h3><p>{p}</p></div></button>)}
+        {CARDS.map(([to, Ic, h]) => <HubTile key={to} to={to} Ic={Ic} h={h} />)}
       </div>
       <div class="ad" style="margin-top:16px">Native ad space</div>
     </div>

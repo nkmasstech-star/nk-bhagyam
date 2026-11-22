@@ -8,7 +8,7 @@ import { Community } from './screens/Community.jsx';
 import { Home } from './screens/Home.jsx';
 import { Result } from './screens/Result.jsx';
 import { Predictions } from './screens/Predictions.jsx';
-import { ThreeDigit, FourDigit } from './screens/Digits.jsx';
+import { ThreeDigit, FourDigit, Analytics4 } from './screens/Digits.jsx';
 import { History3, History3Day, History4, History4Day } from './screens/History.jsx';
 import { Lucky } from './screens/Lucky.jsx';
 import { Poll } from './screens/Poll.jsx';
@@ -92,7 +92,8 @@ export function App() {
     case 'p4': screen = <FourDigit draws={draws} />; break;
     case 'h3': screen = seg[1] ? <History3Day draws={draws} date={seg[1]} /> : <History3 draws={draws} />; break;
     case 'h4': screen = seg[1] ? <History4Day draws={draws} date={seg[1]} /> : <History4 draws={draws} />; break;
-    case 'lucky': screen = <Lucky draws={draws} />; break;
+    case 'lucky': screen = <Lucky draws={draws} n4={route.includes('n=4')} />; break;
+    case 'a4': screen = <Analytics4 />; break;
     case 'poll': screen = <Poll draws={draws} />; break;
     case 'analytics': screen = <Analytics draws={draws} sample={data.sample} />; break;
     case 'profile': screen = <Profile />; nav = true; break;

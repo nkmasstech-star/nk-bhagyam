@@ -50,9 +50,9 @@ function Boxes({ n, t7, onDone, onClose }) {
     </div>, document.body);
 }
 
-export function Lucky({ draws }) {
+export function Lucky({ draws, n4 }) {
   const today = dmy(istNow()); const d = draws.find((x) => x.date === today) || draws[0];
-  const [n, setN] = useState(3);
+  const [n, setN] = useState(n4 ? 4 : 3);
   const [num, setNum] = useState(null); const [saved, setSaved] = useState(false); const [playing, setPlaying] = useState(false);
   const [list, setList] = useState(ls.get('nk_lucky', []));
   const used = ls.get('nk_plays_' + today, 0); const left = Math.max(0, 3 - used);

@@ -431,3 +431,23 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .nkban b{font-size:22px;line-height:1.1;letter-spacing:.4px;text-transform:uppercase}.nkban span{font-size:12.5px;font-weight:600;opacity:.92}
 .nv.on.nklogo{background:#E03A3E;display:grid;place-items:center}
 .nvlogo{width:30px;height:30px;border-radius:5px;object-fit:contain;box-shadow:0 0 0 1.5px #fff}
+/* hub tiles: title + line icon only */
+.htile{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;min-height:0}
+.hti{width:44px;height:44px;border-radius:13px;background:color-mix(in srgb,var(--red2) 14%,var(--card));color:var(--red2);display:grid;place-items:center}
+.hti svg{width:26px;height:26px}
+.htile h3{font-family:Poppins;font-size:15px;font-weight:600;line-height:1.2;color:var(--ink)}
+/* NK banner: app blue, smaller */
+.nkban{background:linear-gradient(100deg,var(--dark),var(--red2));padding:8px 12px;gap:12px;margin-bottom:12px}
+.nkban img{width:38px;height:38px;border-radius:7px}
+.nkban b{font-size:17px}.nkban span{font-size:11.5px}
+.nv.on.nklogo{background:#D44E50}
+/* posters smaller */
+.nkp{padding:10px 10px 12px;gap:7px;margin-bottom:10px}
+.nkd{padding:4px 12px;border-radius:7px}.nkd b{font-size:15px}.nkd span{font-size:12px}
+.nkt{font-size:14px;padding:3px 12px}
+.nkn{padding:4px 14px}.nkn b{font-size:22px}.nkn i{font-size:20px}
+.w4 .nkn b{font-size:20px}
+.nkabc{gap:5px}.nkabc .hd,.nkabc .bd{grid-template-columns:repeat(3,44px);padding:4px 10px}
+.nkabc .hd b{font-size:22px}.nkabc .bd{padding:6px 10px;row-gap:0}.nkabc .bd b{font-size:24px}
+.sub4{text-align:center;font-family:Poppins;font-weight:700;font-size:13.5px;padding:10px 8px 2px;color:var(--ink)}
+.tiles + .note{margin-top:14px}
