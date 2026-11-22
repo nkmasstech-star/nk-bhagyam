@@ -205,3 +205,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 .brand .bt{display:flex;flex-direction:column;line-height:1.05}.brand .bt small{font-size:9.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--mute);font-weight:600;margin-top:3px}
 .dv button.s{background:linear-gradient(135deg,var(--dark2),var(--dark));color:var(--gold)}
+
+.mark.logo-img{border-radius:10px;object-fit:cover;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.bar .brand b{font-size:15px}.bar .brand b span{color:var(--gold2)}
+.splash .art{position:absolute;inset:0;background-position:center 30%;background-size:cover;background-repeat:no-repeat;animation:artin 1.6s ease both}
+.splash .art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,16,32,0) 45%,rgba(11,16,32,.92) 80%)}
+@keyframes artin{from{transform:scale(1.12);opacity:0}}
+.splash .sp-txt{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 70px);text-align:center;z-index:2}
+.splash .nmx{font-size:24px}.splash .nmx span{color:var(--gold)}
+
+.bar .brand .bt small{font-size:8.5px;letter-spacing:.8px;white-space:nowrap}

@@ -27,10 +27,11 @@ function Splash({ onDone }) {
   useEffect(() => { requestAnimationFrame(() => requestAnimationFrame(() => { try { SplashScreen.hide({ fadeOutDuration: 0 }); } catch (e) { /* web */ } })); const id = setTimeout(onDone, 1900); return () => clearTimeout(id); }, []);
   return (
     <div class="splash">
-      <div class="glow" />
-      <div class="lg"><Logo size={130} /></div>
-      <div class="nmx">Bhagyam</div>
-      <div class="sl">{APP.slogan}</div>
+      <div class="art" style="background-image:url(./splash.jpg)" />
+      <div class="sp-txt">
+        <div class="nmx">Malayali <span>Lottery Results</span></div>
+        <div class="sl">{APP.slogan}</div>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { createPortal } from 'preact/compat';
-export const APP = { name: 'Bhagyam', full: 'Bhagyam', slogan: 'Results · Analysis · Predictions', version: '0.1.1 test' };
+export const APP = { name: 'Malayali Lottery Results', full: 'Malayali Lottery Results', slogan: 'Results · Predictions · Analysis', version: '0.1.2 test' };
 export const go = (p) => { location.hash = p; };
 export const back = () => history.back();
 export const openMenu = () => window.dispatchEvent(new Event('nk-menu'));
@@ -19,14 +19,14 @@ export const IconSearch = I(<><circle cx="11" cy="11" r="7" /><path d="M20 20l-3
 export const IconUser = I(<><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></>);
 export const IconClock = I(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>);
 
-export function Logo({ size = 32 }) { return <img class="mark" src="./logo.png" alt="" width={size} height={size} style={`width:${size}px;height:${size}px`} />; }
+export function Logo({ size = 32 }) { return <img class="mark logo-img" src="./logo.png" alt="" width={size} height={size} style={`width:${size}px;height:${size}px`} />; }
 
 export function TopBar() {
   const n = ls.get('nk_unread', 2);
   return (
     <div class="bar">
       <button class="ib" aria-label="Menu" onClick={openMenu}><IconMenu /></button>
-      <div class="brand"><Logo size={34} /><div class="bt"><b>Bhagyam</b><small>Results · Analysis · Predictions</small></div></div>
+      <div class="brand"><Logo size={36} /><div class="bt"><b>Malayali <span>Lottery Results</span></b><small>{APP.slogan}</small></div></div>
       <button class="ib" aria-label="Notifications" onClick={() => go('/notifications')}><IconBell />{n > 0 && <i class="dot" />}</button>
     </div>
   );
@@ -43,7 +43,7 @@ export function BackBar({ title, right }) {
 export function Hero({ draw, fmt }) {
   return (
     <div class="hero">
-      <div class="brand"><Logo size={26} /><b>Bhagyam</b></div>
+      <div class="brand"><Logo size={26} /><b>Malayali Lottery Results</b></div>
       <div class="gm">{draw ? draw.name : ''} <span>{draw ? draw.code : ''}</span></div>
       <div class="dt">{draw ? fmt(draw.date) : ''}</div>
     </div>
