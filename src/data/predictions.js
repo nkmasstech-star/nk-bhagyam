@@ -13,7 +13,8 @@ export function predFor(date) {
   const cols = [0, 1, 2].map(() => { const s = new Set(); while (s.size < 3) s.add(d1()); return [...s].join(''); });
   const board = []; while (board.length < 2) { const x = d1(); if (!board.includes(x)) board.push(x); }
   const box = []; while (box.length < 3) { const x = d1(); if (!box.includes(x)) box.push(x); }
-  return { cols, board, box: box.join(''), p3: pick(3, 3), p4: pick(3, 4), list4: [...new Set(pick(14, 4))].slice(0, 12).sort() };
+  const p3 = pick(3, 3);
+  return { cols, board, box: box.join(''), p3, bc: p3.map((x) => x.slice(1)), p4: p3.map((x) => d1() + x), list4: [...new Set(pick(14, 4))].slice(0, 12).sort() };
 }
 
 // make some sample history days win so the marks can be seen

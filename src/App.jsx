@@ -16,6 +16,7 @@ import { Analytics } from './screens/Analytics.jsx';
 import { Profile, Settings, Notifications } from './screens/Profile.jsx';
 import { HowTo, Faq, Feedback, Legal } from './screens/Info.jsx';
 import { Menu } from './screens/Menu.jsx';
+import { NKHome, Frequency, Monthly, BoxCreator } from './screens/NK.jsx';
 
 function useRoute() {
   const read = () => location.hash.slice(1) || '/home';
@@ -23,7 +24,8 @@ function useRoute() {
   useEffect(() => { const f = () => setR(read()); addEventListener('hashchange', f); return () => removeEventListener('hashchange', f); }, []);
   return r;
 }
-const TABS = [['/home', 'Home', IconHome], ['/nk', 'NK', IconNK], ['/4d', '4D', Icon4D], ['/community', 'Community', IconUsers], ['/profile', 'Profile', IconUser]];
+const ALL_TABS = [['/home', 'Home', IconHome], ['/4d', '4D', Icon4D, '4d'], ['/nk', 'NK', IconNK, 'nk'], ['/community', 'Community', IconUsers, 'community'], ['/profile', 'Profile', IconUser]];
+export const tabOn = () => ({ nk: true, '4d': true, community: true, ...ls.get('nk_tabs', {}) });
 
 function Splash({ onDone }) {
   useEffect(() => { requestAnimationFrame(() => requestAnimationFrame(() => { try { SplashScreen.hide({ fadeOutDuration: 0 }); } catch (e) { /* web */ } })); const id = setTimeout(onDone, 1900); return () => clearTimeout(id); }, []);
@@ -44,6 +46,8 @@ export function App() {
   const [data, setData] = useState({ draws: [], sample: true, ready: false });
   const [menu, setMenu] = useState(false);
   const [msg, setMsg] = useState('');
+  const [, setTabsV] = useState(0);
+  useEffect(() => { const f = () => setTabsV((n) => n + 1); addEventListener('nk-tabs', f); return () => removeEventListener('nk-tabs', f); }, []);
 
   const refresh = () => loadDraws().then((r) => setData({ ...r, ready: true }));
   useEffect(() => { refresh(); }, []);
@@ -79,7 +83,10 @@ export function App() {
   switch (seg[0]) {
     case 'result': screen = <Result draws={draws} date={seg[1]} />; break;
     case 'predictions': screen = <Predictions draws={draws} />; nav = true; break;
-    case 'nk': screen = <ThreeDigit draws={draws} tab />; nav = true; break;
+    case 'nk': screen = <NKHome draws={draws} />; nav = true; break;
+    case 'freq': screen = <Frequency draws={draws} />; break;
+    case 'monthly': screen = <Monthly draws={draws} />; break;
+    case 'box': screen = <BoxCreator />; break;
     case '4d': screen = <FourDigit draws={draws} tab />; nav = true; break;
     case 'p3': screen = <ThreeDigit draws={draws} />; break;
     case 'p4': screen = <FourDigit draws={draws} />; break;
@@ -100,6 +107,8 @@ export function App() {
     default: screen = <Home draws={draws} ready={data.ready} sample={data.sample} onRefresh={refresh} />; nav = true;
   }
   const active = '/' + (seg[0] || 'home');
+  const on = tabOn();
+  const TABS = ALL_TABS.filter((t) => !t[3] || on[t[3]]);
   void ls;
   return (
     <div class="app">

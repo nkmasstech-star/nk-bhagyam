@@ -58,8 +58,8 @@ export function Home({ draws, ready }) {
   const [quick, setQuick] = useState(false);
   return (
     <div>
-      <TopBar />
-      <div class="hcards"><button class="hcard" onClick={() => document.querySelector('.screen') && document.querySelector('.screen').scrollTo({ top: 0, behavior: 'smooth' })}><IconList /><span>Latest Results</span></button><button class="hcard" aria-label="Search results by date" onClick={() => setFind(true)}><IconSearch /><span>Search date</span></button></div>
+      <div class="sticky-top"><TopBar />
+      <div class="hcards"><button class="hcard" onClick={() => document.querySelector('.screen') && document.querySelector('.screen').scrollTo({ top: 0, behavior: 'smooth' })}><IconList /><span>Latest Results</span></button><button class="hcard" aria-label="Search results by date" onClick={() => setFind(true)}><IconSearch /><span>Search date</span></button></div></div>
       {!ready && <div class="empty">Loading…</div>}
       <div class="rc">{draws.map((d, k) => <Card key={d.date} d={d} k={k} today={today} />)}</div>
       {find && <Search draws={draws} onClose={() => setFind(false)} />}

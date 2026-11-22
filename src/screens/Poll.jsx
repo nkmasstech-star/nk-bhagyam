@@ -53,7 +53,7 @@ export function Poll({ draws }) {
   const yest = (() => { const y = parseDmy(today); y.setDate(y.getDate() - 1); return dmy(y); })();
   return (
     <div>
-      <BackBar title="Vote Poll" />
+      <BackBar title="Voting Numbers" />
       <Hero draw={d} fmt={fmtLong} />
       <div class="qwrap">
         <div class="qpollstate"><b>{phase === 'open' ? (mine ? 'Voted ✓' : 'Voting is open') : phase === 'before' ? 'Voting opens at 7:00 AM' : 'Voting closed at 3:00 PM'}</b><span class="meta">1 vote per day · 7:00 AM to 3:00 PM</span></div>

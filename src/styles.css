@@ -390,3 +390,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .qconf{font-size:36px;animation:tagpop .6s cubic-bezier(.2,1.6,.4,1) both}
 .qprize{display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:12px;padding:10px 12px;font-weight:700}.qprize em{font-style:normal;color:#1E8E52;font-family:Poppins;font-size:17px}
 .res svg{width:16px;height:16px;flex:none}
+.sticky-top{position:sticky;top:0;z-index:40;background:var(--bg);margin-top:calc(-4px - env(safe-area-inset-top));padding-top:calc(4px + env(safe-area-inset-top));padding-bottom:2px}
+.sticky-top .hcards{margin-bottom:10px}
+.li2.tx{font-family:Poppins;font-weight:800;font-size:13px;color:var(--red2)}
+.gline{display:flex;justify-content:center;align-items:center;gap:22px;padding:6px 0;flex-wrap:wrap}
+.gline b{font-family:Poppins;font-weight:800;font-size:30px;letter-spacing:1.5px;color:var(--ink)}
+.gline i{font-style:normal;font-family:Poppins;font-weight:800;font-size:26px;color:var(--mute)}
+.tbl tr[onclick],.tbl tbody tr{cursor:pointer}

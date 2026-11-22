@@ -62,7 +62,7 @@ export function Lucky({ draws }) {
   const del = (at) => { const l = list.filter((x) => x.at !== at); ls.set('nk_lucky', l); setList(l); };
   return (
     <div>
-      <BackBar title="Lucky Game Number" />
+      <BackBar title="Lucky Number Generator" />
       <Hero draw={d} fmt={fmtLong} />
       <div class="lab">1. Choose your digits</div>
       <div class="ch2">{[3, 4].map((k) => <button key={k} class={n === k ? 'on' : ''} onClick={() => { setN(k); setNum(null); }}>{k} Digit<small>last {k} of 1st prize</small></button>)}</div>

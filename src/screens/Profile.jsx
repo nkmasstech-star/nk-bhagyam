@@ -128,12 +128,18 @@ export function Settings() {
   const [sound, setSound] = useState(ls.get('nk_sound', true));
   const [lang, setLang] = useState(ls.get('nk_lang', 'en'));
   const tg = (k, v, set) => { set(v); ls.set(k, v); };
+  const [tabs, setTabs] = useState({ nk: true, '4d': true, community: true, ...ls.get('nk_tabs', {}) });
+  const tgTab = (k) => { const n = { ...tabs, [k]: !tabs[k] }; setTabs(n); ls.set('nk_tabs', n); window.dispatchEvent(new Event('nk-tabs')); };
   return (
     <div>
       <BackBar title="Settings" />
       <UpdateCard />
       <div class="list">
         <div class="lr tcol"><b>Theme · {THEMES[theme] ? THEMES[theme].name : ''}</b><div class="themes">{Object.entries(THEMES).map(([id, t]) => <button key={id} class={theme === id ? 'on' : ''} aria-label={t.name} onClick={() => pick(id)}><i style={`background:${t.sw[0]}`} /><i style={`background:${t.sw[1]}`} /></button>)}</div></div>
+      </div>
+      <div class="list">
+        <div class="lr tcol"><b>Customize app<br /><small>Show or hide tabs in the bottom menu</small></b></div>
+        {[['4d', '4D', '4 digit predictions'], ['nk', 'NK', '3 digit guessing, charts and tools'], ['community', 'Community', 'Player posts']].map(([k, l, d]) => <div key={k} class="lr"><span class="li2 tx">{l === 'Community' ? '👥' : l}</span><b>{l}<br /><small>{d}</small></b><button class={tabs[k] ? 'sw on' : 'sw'} aria-label={`Show ${l} tab`} onClick={() => tgTab(k)} /></div>)}
       </div>
       <div class="list">
         <div class="lr"><span class="li2">🔔</span><b>Notifications<br /><small>Results and predictions alerts</small></b><button class={push ? 'sw on' : 'sw'} onClick={() => tg('nk_push', !push, setPush)} /></div>
