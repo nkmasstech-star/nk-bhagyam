@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Malayali Lottery</string>
-    <string name="title_activity_main">Malayali Lottery</string>
+    <string name="app_name">Malabar</string>
+    <string name="title_activity_main">Malabar</string>
     <string name="package_name">com.nkbhagyam.app</string>
     <string name="custom_url_scheme">com.nkbhagyam.app</string>
 </resources>

@@ -29,7 +29,7 @@ function Splash({ onDone }) {
     <div class="splash">
       <div class="art" style="background-image:url(./splash.jpg)" />
       <div class="sp-txt">
-        <div class="nmx">Malayali <span>Lottery Results</span></div>
+        <div class="nmx">Malabar</div>
         <div class="sl">{APP.slogan}</div>
       </div>
     </div>
