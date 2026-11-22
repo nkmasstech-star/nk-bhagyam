@@ -219,9 +219,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .rcard .dchip{font-family:Poppins;font-weight:600;font-size:11px;background:var(--dark);color:var(--gold);border-radius:8px;padding:4px 8px;white-space:nowrap}
 .rcard .nm{font-family:Poppins;font-weight:600;font-size:14.5px;line-height:1.15;margin-top:6px}
 .rcard .meta .code{font-weight:700;color:var(--ink);font-size:12px;letter-spacing:.3px}
-.bn{font-family:'Cinzel',serif!important;font-weight:900!important;letter-spacing:.6px}.bn span{font-weight:700}
-.bar .brand b.bn{font-size:18px}.hero .brand b.bn{font-size:13.5px}
-.splash .nmx.bn{font-size:29px;font-weight:900}
+.bn{font-family:'Cinzel Decorative',serif!important;font-weight:900!important;letter-spacing:.4px;color:var(--ink)}.bn span{font-family:Poppins,sans-serif;font-weight:400;font-size:.62em;letter-spacing:2px;text-transform:uppercase;color:var(--mute);margin-left:4px;vertical-align:middle}
+.bar .brand b.bn{font-size:21px}.hero .brand b.bn{font-size:14px;color:#fff}.hero .brand b.bn span{color:rgba(255,255,255,.75)}
+.splash .nmx.bn{font-size:38px;font-weight:900;color:#fff}.splash .nmx.bn span{color:rgba(255,255,255,.8);font-size:.45em}
 
 .themes{display:flex;gap:12px;flex-wrap:wrap}
 .themes button{width:40px;height:40px;border-radius:50%;position:relative;box-shadow:0 2px 6px rgba(0,0,0,.18);overflow:hidden;border:2px solid var(--card)}
@@ -233,3 +233,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .upd .bar2{height:8px;border-radius:6px;background:rgba(255,255,255,.2);margin-top:10px;overflow:hidden}.upd .bar2 i{display:block;height:100%;background:var(--gold);transition:width .2s}
 .upd button{margin-top:12px;width:100%;border-radius:12px;padding:11px;font-family:Poppins;font-weight:700;background:var(--gold);color:#1a1a1a}
 .upd button:disabled{opacity:.6}
+
+.rc{row-gap:18px;padding-top:6px}
+.rcard{height:auto;padding:0 0 10px;overflow:visible;box-shadow:0 12px 28px rgba(18,26,46,.16),0 2px 6px rgba(18,26,46,.08)}
+.rcard .top{display:block}
+.rcard .dchip{display:block;border-radius:16px 16px 0 0;padding:8px 11px;font-size:11.5px;text-align:left}
+.rcard .nm{padding:0 11px;margin-top:8px}.rcard .meta{padding:0 11px;margin-top:4px}
+.rcard .tag{position:absolute;top:-10px;right:10px;box-shadow:0 4px 10px rgba(0,0,0,.25);animation:tagpop .6s cubic-bezier(.2,1.6,.4,1) both;z-index:2;padding:3px 9px}
+@keyframes tagpop{from{transform:scale(.3) translateY(6px);opacity:0}}
+.nv{padding:0 12px}.nv.on span{font-size:12.5px}

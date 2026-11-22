@@ -3,7 +3,8 @@ import { App as CapApp } from '@capacitor/app';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { loadDraws } from './data/results.js';
-import { go, APP, IconHome, IconStar, IconSearch, IconUser, Logo, ls } from './ui.jsx';
+import { go, APP, IconHome, IconPredict, IconChart, IconUsers, IconUser, Logo, ls } from './ui.jsx';
+import { Community } from './screens/Community.jsx';
 import { Home } from './screens/Home.jsx';
 import { Result } from './screens/Result.jsx';
 import { Predictions } from './screens/Predictions.jsx';
@@ -21,7 +22,7 @@ function useRoute() {
   useEffect(() => { const f = () => setR(read()); addEventListener('hashchange', f); return () => removeEventListener('hashchange', f); }, []);
   return r;
 }
-const TABS = [['/home', 'Home', IconHome], ['/predictions', 'Predictions', IconStar], ['/analytics', 'Analytics', IconSearch], ['/profile', 'Profile', IconUser]];
+const TABS = [['/home', 'Home', IconHome], ['/predictions', 'Predictions', IconPredict], ['/community', 'Community', IconUsers], ['/analytics', 'Analysis', IconChart], ['/profile', 'Profile', IconUser]];
 
 function Splash({ onDone }) {
   useEffect(() => { requestAnimationFrame(() => requestAnimationFrame(() => { try { SplashScreen.hide({ fadeOutDuration: 0 }); } catch (e) { /* web */ } })); const id = setTimeout(onDone, 1900); return () => clearTimeout(id); }, []);
@@ -29,7 +30,7 @@ function Splash({ onDone }) {
     <div class="splash">
       <div class="art" style="background-image:url(./splash.jpg)" />
       <div class="sp-txt">
-        <div class="nmx bn">Malabar <span>Lottery</span></div>
+        <div class="nmx bn">Malabar <span>Results</span></div>
         <div class="sl">{APP.slogan}</div>
       </div>
     </div>
@@ -58,7 +59,7 @@ export function App() {
     let h;
     CapApp.addListener('backButton', () => {
       if (menu) { setMenu(false); return; }
-      const top = ['#/home', '#/predictions', '#/analytics', '#/profile', ''];
+      const top = ['#/home', '#/predictions', '#/community', '#/analytics', '#/profile', ''];
       if (!top.includes(location.hash)) history.back();
       else if (location.hash && location.hash !== '#/home') go('/home');
       else CapApp.exitApp();
@@ -85,6 +86,7 @@ export function App() {
     case 'poll': screen = <Poll draws={draws} />; break;
     case 'analytics': screen = <Analytics draws={draws} sample={data.sample} />; nav = true; break;
     case 'profile': screen = <Profile />; nav = true; break;
+    case 'community': screen = <Community />; nav = true; break;
     case 'settings': screen = <Settings />; break;
     case 'notifications': screen = <Notifications />; break;
     case 'legal': screen = <Legal kind={seg[1]} />; break;

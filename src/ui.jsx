@@ -1,5 +1,5 @@
 import { createPortal } from 'preact/compat';
-export const APP = { name: 'Malabar Lottery', full: 'Malabar Lottery', slogan: 'Results · Analysis · Predictions', version: '0.1.4 test' };
+export const APP = { name: 'Malabar Results', full: 'Malabar Results', slogan: 'Results · Analysis · Predictions', version: '0.1.5 test' };
 export const go = (p) => { location.hash = p; };
 export const back = () => history.back();
 export const openMenu = () => window.dispatchEvent(new Event('nk-menu'));
@@ -15,6 +15,9 @@ export const IconBell = I(<><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8" 
 export const IconBack = I(<path d="M15 5l-7 7 7 7" />);
 export const IconHome = I(<><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /></>);
 export const IconStar = I(<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.3 6L12 16.5 6.6 19.4l1.3-6L3.4 9.3l6-.7z" />);
+export const IconPredict = I(<><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /><path d="M16 8l4-4M17 4h3v3" /></>);
+export const IconChart = I(<><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></>);
+export const IconUsers = I(<><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5" /><circle cx="17" cy="9" r="2.8" /><path d="M16.5 14.6c2.6.2 4.5 2 5 4.9" /></>);
 export const IconSearch = I(<><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></>);
 export const IconUser = I(<><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></>);
 export const IconClock = I(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>);
@@ -26,7 +29,7 @@ export function TopBar() {
   return (
     <div class="bar">
       <button class="ib" aria-label="Menu" onClick={openMenu}><IconMenu /></button>
-      <div class="brand"><Logo size={36} /><div class="bt"><b class="bn">Malabar <span>Lottery</span></b><small>{APP.slogan}</small></div></div>
+      <div class="brand"><Logo size={36} /><div class="bt"><b class="bn">Malabar <span>Results</span></b><small>{APP.slogan}</small></div></div>
       <button class="ib" aria-label="Notifications" onClick={() => go('/notifications')}><IconBell />{n > 0 && <i class="dot" />}</button>
     </div>
   );
@@ -43,7 +46,7 @@ export function BackBar({ title, right }) {
 export function Hero({ draw, fmt }) {
   return (
     <div class="hero">
-      <div class="brand"><Logo size={26} /><b class="bn">Malabar <span>Lottery</span></b></div>
+      <div class="brand"><Logo size={26} /><b class="bn">Malabar <span>Results</span></b></div>
       <div class="gm">{draw ? draw.name : ''} <span>{draw ? draw.code : ''}</span></div>
       <div class="dt">{draw ? fmt(draw.date) : ''}</div>
     </div>
