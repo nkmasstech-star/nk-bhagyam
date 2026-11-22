@@ -4,7 +4,7 @@ import { fmtShort, fmtLong, istNow, dmy } from '../data/games.js';
 import { firstPrizeTail } from '../data/results.js';
 
 const CARDS = [
-  ['/p3', '3D', '3 Digit Guessing', 'ABC board, all board, box & picks', 'r'],
+  ['/p3', '3D', '3 Digit Guessing', 'ABC board, all board, box & picks', ''],
   ['/freq', '📊', 'Result Frequency', 'Most common digits in the 1st prize', ''],
   ['/monthly', '🗓', 'Monthly Chart', '1st prize of the last 30 draws', ''],
   ['/box', '🎲', 'Box Creator', 'Make every order of your digits', ''],

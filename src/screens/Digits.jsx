@@ -12,21 +12,39 @@ const Extra = () => (
 );
 const Head = ({ tab, title }) => (tab ? <><TopBar /><div class="pghead">{title}</div></> : <BackBar title={title} />);
 
+// 3 Digit Guessing: poster-style cards like the NK Guessing images (logo in both corners, date + draw, title banner, numbers)
+function Poster({ d, children }) {
+  const [dd, mm, yy] = d ? d.date.split('-') : ['', '', ''];
+  return (
+    <div class="nkp">
+      <img class="nkl l" src="./nk-logo.png" alt="" /><img class="nkl r" src="./nk-logo.png" alt="NK Guessing" />
+      <div class="nkd"><b>{dd}/{mm}/{yy}</b><span>{d ? `${d.name} ${d.code.replace('-', ' ')}` : ''}</span></div>
+      {children}
+    </div>
+  );
+}
+const Ttl = ({ children }) => <div class="nkt">{children}</div>;
+const Nums = ({ list, sep = '.' }) => <div class="nkn">{list.map((x, i) => <b key={i}>{x}{i < list.length - 1 ? sep : ''}</b>)}</div>;
+
 export function ThreeDigit({ draws }) {
   const d = todayDraw(draws); const p = predFor(dmy(istNow()));
-  const Row = ({ list }) => <div class="gline">{list.map((x, i) => <b key={i}>{x}</b>)}</div>;
   return (
     <div>
       <BackBar title="3 Digit Guessing" />
-      <Hero draw={d} fmt={fmtLong} />
-      <div class="card"><div class="band up">ABC Board Guessing</div><div class="in">
-        <div class="sq"><div class="cols">{p.cols.map((c, i) => <div key={i}><div class="ch">{'ABC'[i]}</div>{c.split('').map((x, r) => <div key={r} class="cl">{x}</div>)}</div>)}</div></div>
-      </div></div>
-      <div class="card"><div class="band up">All Board</div><div class="in"><div class="gline"><b>{p.board[0]}</b><i>--</i><b>{p.board[1]}</b></div></div></div>
-      <div class="card"><div class="band up">Box Number</div><div class="in"><div class="gline"><b>{p.box}</b></div></div></div>
-      <div class="card"><div class="band up">3 Digit Guessing</div><div class="in"><Row list={p.p3} /></div></div>
-      <div class="card"><div class="band up">BC Board Guessing</div><div class="in"><Row list={p.bc} /></div></div>
-      <div class="card"><div class="band up">4 Digit Guessing</div><div class="in"><Row list={p.p4} /></div></div>
+      <Poster d={d}>
+        <Ttl>ABC Board Guessing</Ttl>
+        <div class="nkabc"><div class="hd">{['A', 'B', 'C'].map((x) => <b key={x}>{x}</b>)}</div>
+          <div class="bd">{[0, 1, 2].map((r) => p.cols.map((c, i) => <b key={r + '-' + i}>{c[r]}</b>))}</div></div>
+      </Poster>
+      <Poster d={d}>
+        <Ttl>All Board</Ttl>
+        <div class="nkn sm"><b>{p.board[0]}</b><i>--</i><b>{p.board[1]}</b></div>
+        <Ttl>Box Number</Ttl>
+        <div class="nkn"><b>{p.box}</b></div>
+      </Poster>
+      <Poster d={d}><Ttl>3 Digit Guessing</Ttl><Nums list={p.p3} /></Poster>
+      <Poster d={d}><Ttl>BC Board Guessing</Ttl><Nums list={p.bc} /></Poster>
+      <Poster d={d}><Ttl>4 Digit Guessing</Ttl><div class="w4"><Nums list={p.p4} /></div></Poster>
       <button class="row-link" onClick={() => go('/h3')}><div><b>History Predictions</b><small>Checked against the 1st prize last 3 &amp; 4 digits</small></div><span>›</span></button>
       <Note><b>Disclaimer</b> · This is a history-based probability suggestion to help you pick the <b>last 3 or 4 digits of the 1st prize</b>. It is <b>not 100% sure</b> and is for <b>entertainment purposes only</b>. We do not promote any online 3 or 4 digit game, betting or gambling. Please do not misuse it.</Note>
     </div>

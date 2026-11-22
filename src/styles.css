@@ -397,3 +397,18 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .gline b{font-family:Poppins;font-weight:800;font-size:30px;letter-spacing:1.5px;color:var(--ink)}
 .gline i{font-style:normal;font-family:Poppins;font-weight:800;font-size:26px;color:var(--mute)}
 .tbl tr[onclick],.tbl tbody tr{cursor:pointer}
+/* NK Guessing poster cards */
+.nkp{position:relative;margin:0 16px 14px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px 12px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;overflow:hidden}
+.nkl{position:absolute;top:10px;width:46px;height:43px;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,.25)}.nkl.l{left:10px}.nkl.r{right:10px}
+.nkd{background:#111;color:#fff;border-radius:8px;padding:6px 14px;text-align:center;display:flex;flex-direction:column;margin:0 52px;min-width:0}
+.nkd b{font-family:Poppins;font-weight:800;font-size:20px;line-height:1.15}.nkd span{font-family:Poppins;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.3px;line-height:1.2}
+.nkt{background:var(--red2);color:#fff;font-family:Poppins;font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:.4px;padding:5px 14px;border-radius:6px;text-align:center}
+.nkn{background:#111;border-radius:8px;padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.nkn b{font-family:Poppins;font-weight:800;font-size:30px;color:#FFE14A;letter-spacing:1px}
+.nkn i{font-style:normal;font-family:Poppins;font-weight:800;font-size:26px;color:#FFE14A}
+.nkn.sm{gap:22px}
+.nkabc{display:flex;flex-direction:column;gap:8px;align-items:center}
+.nkabc .hd,.nkabc .bd{background:#111;border-radius:8px;display:grid;grid-template-columns:repeat(3,58px);justify-items:center;padding:6px 14px}
+.nkabc .hd b{font-family:Poppins;font-weight:800;font-size:32px;color:#FFE14A}
+.nkabc .bd{row-gap:4px;padding:10px 14px}.nkabc .bd b{font-family:Poppins;font-weight:800;font-size:34px;color:#fff}
+.w4 .nkn{flex-wrap:nowrap;gap:8px;padding:8px 12px}.w4 .nkn b{font-size:25px;letter-spacing:.5px}
