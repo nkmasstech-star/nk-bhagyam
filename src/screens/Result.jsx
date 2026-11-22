@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { BackBar, Hero, Disclaimer, IconClock } from '../ui.jsx';
 import { loadResult, newNumbers } from '../data/results.js';
+import { QuickFab, QuickCheck } from './Quick.jsx';
 import { fmtLong, inr, istNow, dmy, istMinutes, LIVE_START, LIVE_END, RESULT_AT } from '../data/games.js';
 
 const pad4 = (l) => { const r = l.slice(); while (r.length % 4) r.push(''); return r; };
@@ -30,6 +31,7 @@ export function Result({ draws, date }) {
   const draw = draws.find((d) => d.date === date) || draws[0];
   const [res, setRes] = useState(undefined);
   const [fresh, setFresh] = useState(new Set());
+  const [quick, setQuick] = useState(false);
   const prev = useRef(null);
   const today = draw && draw.date === dmy(istNow());
 
@@ -65,6 +67,8 @@ export function Result({ draws, date }) {
       <Ad />
       {lower.map((p, k) => <div key={p.label}>{k === 4 && <Ad />}<Lower p={p} fresh={fresh} wait={wait} /></div>)}
       <Disclaimer />
+      {res && res.complete && res.first && <QuickFab low onClick={() => setQuick(true)} />}
+      {quick && <QuickCheck draw={draw} res={res} onClose={() => setQuick(false)} />}
     </div>
   );
 }

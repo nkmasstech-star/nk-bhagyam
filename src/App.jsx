@@ -3,7 +3,7 @@ import { App as CapApp } from '@capacitor/app';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { loadDraws } from './data/results.js';
-import { go, APP, IconHome, IconPredict, IconChart, IconUsers, IconUser, Logo, ls } from './ui.jsx';
+import { go, APP, IconHome, IconNK, Icon4D, IconUsers, IconUser, Logo, ls } from './ui.jsx';
 import { Community } from './screens/Community.jsx';
 import { Home } from './screens/Home.jsx';
 import { Result } from './screens/Result.jsx';
@@ -23,7 +23,7 @@ function useRoute() {
   useEffect(() => { const f = () => setR(read()); addEventListener('hashchange', f); return () => removeEventListener('hashchange', f); }, []);
   return r;
 }
-const TABS = [['/home', 'Home', IconHome], ['/predictions', 'Predictions', IconPredict], ['/community', 'Community', IconUsers], ['/analytics', 'Analysis', IconChart], ['/profile', 'Profile', IconUser]];
+const TABS = [['/home', 'Home', IconHome], ['/nk', 'NK', IconNK], ['/4d', '4D', Icon4D], ['/community', 'Community', IconUsers], ['/profile', 'Profile', IconUser]];
 
 function Splash({ onDone }) {
   useEffect(() => { requestAnimationFrame(() => requestAnimationFrame(() => { try { SplashScreen.hide({ fadeOutDuration: 0 }); } catch (e) { /* web */ } })); const id = setTimeout(onDone, 1900); return () => clearTimeout(id); }, []);
@@ -60,7 +60,7 @@ export function App() {
     let h;
     CapApp.addListener('backButton', () => {
       if (menu) { setMenu(false); return; }
-      const top = ['#/home', '#/predictions', '#/community', '#/analytics', '#/profile', ''];
+      const top = ['#/home', '#/nk', '#/4d', '#/community', '#/profile', ''];
       if (!top.includes(location.hash)) history.back();
       else if (location.hash && location.hash !== '#/home') go('/home');
       else CapApp.exitApp();
@@ -79,13 +79,15 @@ export function App() {
   switch (seg[0]) {
     case 'result': screen = <Result draws={draws} date={seg[1]} />; break;
     case 'predictions': screen = <Predictions draws={draws} />; nav = true; break;
+    case 'nk': screen = <ThreeDigit draws={draws} tab />; nav = true; break;
+    case '4d': screen = <FourDigit draws={draws} tab />; nav = true; break;
     case 'p3': screen = <ThreeDigit draws={draws} />; break;
     case 'p4': screen = <FourDigit draws={draws} />; break;
     case 'h3': screen = seg[1] ? <History3Day draws={draws} date={seg[1]} /> : <History3 draws={draws} />; break;
     case 'h4': screen = seg[1] ? <History4Day draws={draws} date={seg[1]} /> : <History4 draws={draws} />; break;
     case 'lucky': screen = <Lucky draws={draws} />; break;
     case 'poll': screen = <Poll draws={draws} />; break;
-    case 'analytics': screen = <Analytics draws={draws} sample={data.sample} />; nav = true; break;
+    case 'analytics': screen = <Analytics draws={draws} sample={data.sample} />; break;
     case 'profile': screen = <Profile />; nav = true; break;
     case 'community': screen = <Community />; nav = true; break;
     case 'settings': screen = <Settings />; break;
@@ -104,7 +106,7 @@ export function App() {
       <main class={nav ? 'screen' : 'screen no-nav'}><div key={path} class={nav ? 'page' : 'page push'}>{screen}</div></main>
       {nav && (
         <nav class="nav"><div class="nav-in">
-          {TABS.map(([p, l, Ic]) => <button key={p} class={active === p ? 'nv on' : 'nv'} onClick={() => go(p)} aria-label={l}><Ic /><span>{l}</span></button>)}
+          {TABS.map(([p, l, Ic]) => <button key={p} class={active === p ? 'nv on' : 'nv'} onClick={() => go(p)} aria-label={l}><Ic />{l !== 'NK' && l !== '4D' && <span>{l}</span>}</button>)}
         </div></nav>
       )}
       {menu && <Menu onClose={() => setMenu(false)} />}

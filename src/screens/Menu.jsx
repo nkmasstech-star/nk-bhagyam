@@ -1,5 +1,5 @@
 import { go, Logo, toast } from '../ui.jsx';
-const ITEMS = [['❓', 'How to use', '/howto'], ['💬', 'FAQ', '/faq'], ['✉️', 'Feedback', '/feedback'], null, ['🔒', 'Privacy Policy', '/legal/privacy'], ['📄', 'Terms of Use', '/legal/terms'], ['ⓘ', 'Disclaimer', '/legal/disclaimer'], ['📤', 'Share the app', 'share'], ['⭐', 'Rate the app', 'rate']];
+const ITEMS = [['📊', 'Analysis', '/analytics'], ['🔮', 'All Predictions', '/predictions'], null, ['❓', 'How to use', '/howto'], ['💬', 'FAQ', '/faq'], ['✉️', 'Feedback', '/feedback'], null, ['🔒', 'Privacy Policy', '/legal/privacy'], ['📄', 'Terms of Use', '/legal/terms'], ['ⓘ', 'Disclaimer', '/legal/disclaimer'], ['📤', 'Share the app', 'share'], ['⭐', 'Rate the app', 'rate']];
 export function Menu({ onClose }) {
   const act = (to) => {
     onClose();

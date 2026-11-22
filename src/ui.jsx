@@ -18,6 +18,9 @@ export const IconStar = I(<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.3 6L12 16.5 6.6 
 export const IconPredict = I(<><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /><path d="M16 8l4-4M17 4h3v3" /></>);
 export const IconChart = I(<><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></>);
 export const IconUsers = I(<><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5" /><circle cx="17" cy="9" r="2.8" /><path d="M16.5 14.6c2.6.2 4.5 2 5 4.9" /></>);
+const T = (txt) => () => <svg viewBox="0 0 24 24"><text x="12" y="16.5" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="800" font-size="12.5" fill="currentColor" letter-spacing=".3">{txt}</text></svg>;
+export const IconNK = T('NK');
+export const Icon4D = T('4D');
 export const IconSearch = I(<><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></>);
 export const IconUser = I(<><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></>);
 export const IconClock = I(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>);

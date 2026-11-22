@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { TopBar, go, IconSearch } from '../ui.jsx';
+import { BackBar, go, IconSearch } from '../ui.jsx';
 import { fmtShort } from '../data/games.js';
 import { firstPrizeTail } from '../data/results.js';
 import { resultOrSample } from '../data/predictions.js';
@@ -18,7 +18,7 @@ export function Analytics({ draws }) {
   };
   return (
     <div>
-      <TopBar />
+      <BackBar title="Analysis" />
       <div style="padding:0 20px 12px"><div class="h" style="font-size:22px;font-weight:700">Analytics</div><div class="meta">Last 30 draws · sample data for now</div></div>
       <div class="search"><input inputMode="numeric" maxLength={6} placeholder="Search number e.g. 4365" value={q} onInput={(e) => setQ(e.currentTarget.value)} onKeyDown={(e) => e.key === 'Enter' && search()} /><button onClick={search} aria-label="Search"><IconSearch /></button></div>
       {hits && <div class="card"><div class="band dk">Search result · {q}</div>{hits.length ? hits.map((h, i) => <button key={i} class="lr" onClick={() => go('/result/' + h.d.date)}><b>{h.d.name} {h.d.code}</b><small>{h.where} · {fmtShort(h.d.date)}</small><span>›</span></button>) : <div class="empty">Not found in the last 30 draws</div>}</div>}

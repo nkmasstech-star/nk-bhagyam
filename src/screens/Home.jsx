@@ -2,7 +2,9 @@ import { useState } from 'preact/hooks';
 import { TopBar, go, IconSearch } from '../ui.jsx';
 import { fmtLong, istNow, dmy, RESULT_AT, istMinutes, LIVE_START, LIVE_END, parseDmy } from '../data/games.js';
 import { Sheet } from '../social/Sheet.jsx';
+import { QuickFab, QuickScan } from './Quick.jsx';
 
+const IconList = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="7" height="7" rx="1.5" /><rect x="13" y="4" width="7" height="7" rx="1.5" /><rect x="4" y="13" width="7" height="7" rx="1.5" /><rect x="13" y="13" width="7" height="7" rx="1.5" /></svg>;
 const MON = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 // accepts 21, 21-11, 21/11/2026, 21 nov, nov 21, 2026-11-21, game name or code (SM-82)
 function matches(d, q) {
@@ -53,13 +55,16 @@ function Search({ draws, onClose }) {
 export function Home({ draws, ready }) {
   const today = dmy(istNow());
   const [find, setFind] = useState(false);
+  const [quick, setQuick] = useState(false);
   return (
     <div>
       <TopBar />
-      <div class="sec"><b>Latest Results</b><button class="findbtn" aria-label="Search results by date" onClick={() => setFind(true)}><IconSearch /><span>Search date</span></button></div>
+      <div class="hcards"><button class="hcard" onClick={() => document.querySelector('.screen') && document.querySelector('.screen').scrollTo({ top: 0, behavior: 'smooth' })}><IconList /><span>Latest Results</span></button><button class="hcard" aria-label="Search results by date" onClick={() => setFind(true)}><IconSearch /><span>Search date</span></button></div>
       {!ready && <div class="empty">Loading…</div>}
       <div class="rc">{draws.map((d, k) => <Card key={d.date} d={d} k={k} today={today} />)}</div>
       {find && <Search draws={draws} onClose={() => setFind(false)} />}
+      {ready && <QuickFab onClick={() => setQuick(true)} />}
+      {quick && <QuickScan draws={draws} onClose={() => setQuick(false)} />}
     </div>
   );
 }
