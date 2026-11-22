@@ -47,7 +47,7 @@ export function App() {
   const refresh = () => loadDraws().then((r) => setData({ ...r, ready: true }));
   useEffect(() => { refresh(); }, []);
   useEffect(() => {
-    const sync = () => { try { const dark = document.documentElement.dataset.theme === 'plum'; const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light }).catch(() => {}); StatusBar.setBackgroundColor({ color: bg }).catch(() => {}); } catch (e) { /* web */ } };
+    const sync = () => { try { const dark = document.documentElement.dataset.mode === 'dark'; const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light }).catch(() => {}); StatusBar.setBackgroundColor({ color: bg }).catch(() => {}); } catch (e) { /* web */ } };
     sync(); addEventListener('nk-theme', sync); return () => removeEventListener('nk-theme', sync);
   }, []);
   useEffect(() => {

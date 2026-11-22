@@ -1,19 +1,23 @@
-// 6 colour themes (from Nehru's reference picture). Default = Sky (light pastel blue).
+// 4 themes copied from Q Spot 4D (Light, Black, Charcoal, Teal).
+// Light = default; its yellow primary is swapped for light sky blue.
+const DARK_BASE = { gold: '#E8B94A', gold2: '#E8B94A', red: '#B8862B', red2: '#8F6618', live: '#FF5A5F' };
 export const THEMES = {
-  sky:    { name: 'Sky',      sw: ['#67AEEE', '#FFD8CC'], v: { bg: '#F4F9FF', card: '#FFFFFF', ink: '#14233A', mute: '#5E708A', line: '#E2ECF7', soft: '#E6F3FF', red: '#4A9BE8', red2: '#2C74C9', dark: '#2A64A8', dark2: '#4A8FD8', gold: '#FFD8CC', gold2: '#C2603F', live: '#F0526B' } },
-  forest: { name: 'Forest',   sw: ['#0C3B2E', '#FFBA00'], v: { bg: '#F3F2EC', card: '#FFFFFF', ink: '#11251D', mute: '#5D6F66', line: '#E4E6DD', soft: '#EDF2EC', red: '#1E5A47', red2: '#0C3B2E', dark: '#0C3B2E', dark2: '#1E5A47', gold: '#FFBA00', gold2: '#9A6A2E', live: '#E5484D' } },
-  royal:  { name: 'Royal',    sw: ['#752FFF', '#FFB831'], v: { bg: '#F6F4FF', card: '#FFFFFF', ink: '#15102A', mute: '#625C7A', line: '#E8E4F6', soft: '#EFEBFF', red: '#8A4DFF', red2: '#5A1FE0', dark: '#111111', dark2: '#2A2440', gold: '#FFB831', gold2: '#8C5A00', live: '#FE3A3A' } },
-  coral:  { name: 'Coral',    sw: ['#FF5344', '#A6D3F2'], v: { bg: '#F7FAFC', card: '#FFFFFF', ink: '#1C2633', mute: '#5F6B78', line: '#E5EBF0', soft: '#EAF4FB', red: '#FF6B5D', red2: '#E8402F', dark: '#1F2B38', dark2: '#33465A', gold: '#F7D78C', gold2: '#B4531F', live: '#E5484D' } },
-  sand:   { name: 'Sand',     sw: ['#E38C40', '#977B60'], v: { bg: '#FCF6EA', card: '#FFFFFF', ink: '#2B2116', mute: '#7A6A58', line: '#F0E6D2', soft: '#FCF1DA', red: '#E9994F', red2: '#D07A2E', dark: '#6E5640', dark2: '#977B60', gold: '#F6C561', gold2: '#A85D1C', live: '#E5484D' } },
-  plum:   { name: 'Plum (dark)', sw: ['#312C51', '#F0C38E'], v: { bg: '#1E1A35', card: '#2B2649', ink: '#F4F1FF', mute: '#B6B0D3', line: '#3E3866', soft: '#363059', red: '#48426D', red2: '#312C51', dark: '#14112A', dark2: '#2B2649', gold: '#F0C38E', gold2: '#F1AA9B', live: '#FF6B7A' } },
+  light:    { name: 'Light',    dark: false, sw: ['#F3F5FA', '#4AA8F0'], v: { bg: '#F3F5FA', card: '#FFFFFF', ink: '#121A2E', mute: '#55627F', line: '#D9DFEC', soft: '#EDF0F7', red: '#4AA8F0', red2: '#2B8AD8', dark: '#2479C8', dark2: '#4AA8F0', gold: '#CDEBFF', gold2: '#1F6FC0', live: '#E53935' } },
+  black:    { name: 'Black',    dark: true,  sw: ['#000000', '#E8B94A'], v: { ...DARK_BASE, bg: '#000000', card: '#0E0E11', ink: '#F5F5F7', mute: '#9A9AA5', line: '#25252B', soft: '#17171B', dark: '#17171B', dark2: '#25252B' } },
+  charcoal: { name: 'Charcoal', dark: true,  sw: ['#12100E', '#E8B94A'], v: { ...DARK_BASE, bg: '#12100E', card: '#1D1A16', ink: '#F6F1E8', mute: '#A89F90', line: '#332E27', soft: '#272320', dark: '#272320', dark2: '#332E27' } },
+  teal:     { name: 'Teal',     dark: true,  sw: ['#0B1519', '#E8B94A'], v: { ...DARK_BASE, bg: '#0B1519', card: '#12232A', ink: '#EEF6F8', mute: '#8FB0BB', line: '#22404B', soft: '#1A303A', dark: '#1A303A', dark2: '#22404B' } },
 };
-export const DEFAULT_THEME = 'sky';
+export const DEFAULT_THEME = 'light';
 export function applyTheme(id) {
-  const t = THEMES[id] || THEMES[DEFAULT_THEME];
+  const key = THEMES[id] ? id : DEFAULT_THEME;
+  const t = THEMES[key];
   const r = document.documentElement.style;
   Object.entries(t.v).forEach(([k, val]) => r.setProperty('--' + k, val));
-  r.setProperty('--shadow2', `0 14px 30px -12px ${t.v.red2}77`);
-  document.documentElement.dataset.theme = id;
+  // same card shadow as Q Spot 4D (darker on dark themes)
+  r.setProperty('--shadow', t.dark ? '0 6px 16px rgba(0,0,0,.35)' : '0 6px 16px rgba(0,0,0,.16)');
+  r.setProperty('--shadow2', t.dark ? '0 6px 16px rgba(0,0,0,.35)' : '0 6px 16px rgba(0,0,0,.16)');
+  document.documentElement.dataset.theme = key;
+  document.documentElement.dataset.mode = t.dark ? 'dark' : 'light';
   const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', t.v.bg);
   return t;
 }

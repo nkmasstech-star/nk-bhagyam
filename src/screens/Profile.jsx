@@ -55,7 +55,7 @@ function UpdateCard() {
 }
 
 export function Settings() {
-  const [theme, setTheme] = useState(ls.get('nk_theme', DEFAULT_THEME));
+  const [theme, setTheme] = useState(THEMES[ls.get('nk_theme', DEFAULT_THEME)] ? ls.get('nk_theme', DEFAULT_THEME) : DEFAULT_THEME);
   const pick = (id) => { setTheme(id); ls.set('nk_theme', id); applyTheme(id); window.dispatchEvent(new Event('nk-theme')); };
   const [push, setPush] = useState(ls.get('nk_push', true));
   const [sound, setSound] = useState(ls.get('nk_sound', true));

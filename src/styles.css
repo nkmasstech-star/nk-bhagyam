@@ -254,3 +254,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .rcard{border-width:2px;box-shadow:0 4px 12px rgba(18,26,46,.09)}
 .rcard .tag.nw{background:#E53935;color:#fff;animation:tagpop .6s cubic-bezier(.2,1.6,.4,1) both,nwblink 1.1s ease-in-out .6s infinite}
 @keyframes nwblink{50%{opacity:.35}}
+
+/* Q Spot 4D style shadows */
+.rcard{box-shadow:var(--shadow)}
+.card,.tile:not(.r):not(.d){border:1px solid var(--line)}
+.rcard{border-color:var(--line)}
+.rcard .dchip{background:color-mix(in srgb,var(--red2) 24%,var(--card));color:var(--gold2);border-bottom-color:var(--line)}
