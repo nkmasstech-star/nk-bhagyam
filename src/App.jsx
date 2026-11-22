@@ -115,7 +115,7 @@ export function App() {
       <main class={nav ? 'screen' : 'screen no-nav'}><div key={path} class={nav ? 'page' : 'page push'}>{screen}</div></main>
       {nav && (
         <nav class="nav"><div class="nav-in">
-          {TABS.map(([p, l, Ic]) => <button key={p} class={active === p ? 'nv on' : 'nv'} onClick={() => go(p)} aria-label={l}><Ic />{l !== 'NK' && l !== '4D' && <span>{l}</span>}</button>)}
+          {TABS.map(([p, l, Ic]) => <button key={p} class={active === p ? (l === 'NK' ? 'nv on nklogo' : 'nv on') : 'nv'} onClick={() => go(p)} aria-label={l}>{l === 'NK' && active === p ? <img class="nvlogo" src="./nk-logo.png" alt="NK" /> : <Ic />}{l !== 'NK' && l !== '4D' && <span>{l}</span>}</button>)}
         </div></nav>
       )}
       {menu && <Menu onClose={() => setMenu(false)} />}

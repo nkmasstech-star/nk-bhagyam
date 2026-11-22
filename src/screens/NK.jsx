@@ -18,7 +18,7 @@ export function NKHome({ draws }) {
   return (
     <div>
       <TopBar />
-      <div style="padding:0 20px 12px"><div class="h" style="font-size:22px;font-weight:700">NK</div><div class="meta">Today · {t ? `${t.name} ${t.code}` : ''} · Draw 3:00 PM</div></div>
+      <div class="nkban"><img src="./nk-logo.png" alt="NK Guessing" /><div><b>NK Guessing</b><span>Guessing · charts · tools</span></div><em>{t ? `${t.name} ${t.code}` : ''}</em></div>
       <div class="tiles">
         {CARDS.map(([to, ic, h, p, cls]) => <button key={to} class={'tile ' + cls} onClick={() => go(to)}><span class="ti">{ic}</span><div><h3>{h}</h3><p>{p}</p></div></button>)}
       </div>

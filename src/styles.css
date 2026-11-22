@@ -412,3 +412,17 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .nkabc .hd b{font-family:Poppins;font-weight:800;font-size:32px;color:#FFE14A}
 .nkabc .bd{row-gap:4px;padding:10px 14px}.nkabc .bd b{font-family:Poppins;font-weight:800;font-size:34px;color:#fff}
 .w4 .nkn{flex-wrap:nowrap;gap:8px;padding:8px 12px}.w4 .nkn b{font-size:25px;letter-spacing:.5px}
+/* posters in app colours (no logo) */
+.nkd{background:var(--dark);margin:0}
+.nkn,.nkabc .hd,.nkabc .bd{background:var(--soft);border:1px solid var(--line)}
+.nkn b,.nkn i{color:var(--ink)}
+.nkabc .hd{background:var(--dark);border:0}.nkabc .hd b{color:#fff}
+.nkabc .bd b{color:var(--ink)}
+/* NK tab: logo in the active circle */
+.nv.on.nklogo{padding:0;width:46px;min-width:46px;overflow:hidden;background:transparent;box-shadow:0 4px 10px rgba(0,0,0,.25)}
+.nvlogo{width:46px;height:46px;border-radius:50%;object-fit:cover;display:block;animation:tagpop .35s cubic-bezier(.2,1.6,.4,1) both}
+/* NK banner */
+.nkban{margin:2px 16px 14px;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:linear-gradient(100deg,var(--dark),var(--red2));color:#fff;box-shadow:var(--shadow)}
+.nkban img{width:44px;height:44px;border-radius:10px;flex:none;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.nkban div{display:flex;flex-direction:column;min-width:0;flex:1}.nkban b{font-family:Poppins;font-weight:800;font-size:16px;letter-spacing:.3px}
+.nkban span{font-size:11.5px;opacity:.85}.nkban em{font-style:normal;font-size:11px;font-weight:700;background:rgba(255,255,255,.18);padding:4px 8px;border-radius:999px;white-space:nowrap}

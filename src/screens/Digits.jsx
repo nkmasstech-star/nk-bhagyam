@@ -12,12 +12,11 @@ const Extra = () => (
 );
 const Head = ({ tab, title }) => (tab ? <><TopBar /><div class="pghead">{title}</div></> : <BackBar title={title} />);
 
-// 3 Digit Guessing: poster-style cards like the NK Guessing images (logo in both corners, date + draw, title banner, numbers)
+// 3 Digit Guessing: poster-style cards in the NK Guessing order (date + draw, title banner, numbers), app colours
 function Poster({ d, children }) {
   const [dd, mm, yy] = d ? d.date.split('-') : ['', '', ''];
   return (
     <div class="nkp">
-      <img class="nkl l" src="./nk-logo.png" alt="" /><img class="nkl r" src="./nk-logo.png" alt="NK Guessing" />
       <div class="nkd"><b>{dd}/{mm}/{yy}</b><span>{d ? `${d.name} ${d.code.replace('-', ' ')}` : ''}</span></div>
       {children}
     </div>
