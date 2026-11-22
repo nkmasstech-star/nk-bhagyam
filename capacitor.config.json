@@ -1,0 +1,11 @@
+{
+  "appId": "com.nkbhagyam.app",
+  "appName": "NK Bhagyam",
+  "webDir": "dist",
+  "backgroundColor": "#0B3D2E",
+  "plugins": {
+    "CapacitorHttp": { "enabled": true },
+    "SplashScreen": { "launchShowDuration": 4000, "launchAutoHide": false, "launchFadeOutDuration": 0, "backgroundColor": "#0B3D2E" },
+    "StatusBar": { "style": "DARK", "backgroundColor": "#F4F0E6" }
+  }
+}
