@@ -247,3 +247,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .rcard{border-radius:9px}
 .rcard .dchip{border-radius:9px 9px 0 0;background:color-mix(in srgb,var(--dark) 16%,var(--card));color:var(--dark);font-weight:700}
 .rcard .tag{border-radius:6px}
+.bar .brand .bt{align-items:flex-start;text-align:left}
+.rcard{border:1px solid color-mix(in srgb,var(--dark) 22%,var(--card))}
+.rcard .dchip{border-radius:8px 8px 0 0;background:color-mix(in srgb,var(--dark) 32%,var(--card));color:var(--dark);border-bottom:1px solid color-mix(in srgb,var(--dark) 22%,var(--card))}
