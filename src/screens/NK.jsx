@@ -14,11 +14,11 @@ const CARDS = [
 
 // NK tab: hub of cards
 export function NKHome({ draws }) {
-  const t = draws.find((d) => d.date === dmy(istNow())) || draws[0];
+  void draws;
   return (
     <div>
       <TopBar />
-      <div class="nkban"><img src="./nk-logo.png" alt="NK Guessing" /><div><b>NK Guessing</b><span>Guessing · charts · tools</span></div><em>{t ? `${t.name} ${t.code}` : ''}</em></div>
+      <div class="nkban"><img src="./nk-logo.png" alt="NK Guessing" /><div><b>NK Guessing</b><span>Analysis &amp; Predictions</span></div></div>
       <div class="tiles">
         {CARDS.map(([to, ic, h, p, cls]) => <button key={to} class={'tile ' + cls} onClick={() => go(to)}><span class="ti">{ic}</span><div><h3>{h}</h3><p>{p}</p></div></button>)}
       </div>

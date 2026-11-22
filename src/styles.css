@@ -426,3 +426,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .nkban img{width:44px;height:44px;border-radius:10px;flex:none;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .nkban div{display:flex;flex-direction:column;min-width:0;flex:1}.nkban b{font-family:Poppins;font-weight:800;font-size:16px;letter-spacing:.3px}
 .nkban span{font-size:11.5px;opacity:.85}.nkban em{font-style:normal;font-size:11px;font-weight:700;background:rgba(255,255,255,.18);padding:4px 8px;border-radius:999px;white-space:nowrap}
+.nkban{background:#E03A3E;padding:10px 14px;gap:14px}
+.nkban img{width:52px;height:52px;border-radius:8px;box-shadow:0 0 0 2px rgba(255,255,255,.9),0 3px 10px rgba(0,0,0,.25)}
+.nkban b{font-size:22px;line-height:1.1;letter-spacing:.4px;text-transform:uppercase}.nkban span{font-size:12.5px;font-weight:600;opacity:.92}
+.nv.on.nklogo{background:#E03A3E;display:grid;place-items:center}
+.nvlogo{width:30px;height:30px;border-radius:5px;object-fit:contain;box-shadow:0 0 0 1.5px #fff}
