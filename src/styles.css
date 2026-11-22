@@ -250,3 +250,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .bar .brand .bt{align-items:flex-start;text-align:left}
 .rcard{border:1px solid color-mix(in srgb,var(--dark) 22%,var(--card))}
 .rcard .dchip{border-radius:8px 8px 0 0;background:color-mix(in srgb,var(--dark) 32%,var(--card));color:var(--dark);border-bottom:1px solid color-mix(in srgb,var(--dark) 22%,var(--card))}
+
+.rcard{border-width:2px;box-shadow:0 4px 12px rgba(18,26,46,.09)}
+.rcard .tag.nw{background:#E53935;color:#fff;animation:tagpop .6s cubic-bezier(.2,1.6,.4,1) both,nwblink 1.1s ease-in-out .6s infinite}
+@keyframes nwblink{50%{opacity:.35}}

@@ -13,19 +13,9 @@ export function Home({ draws, ready, sample }) {
     { cls: 'dk', k: '4 Digit Predictions', title: '₹5,000 to ₹100 prizes', body: <div class="chips">{p.list4.slice(0, 4).map((x) => <b key={x}>{x}</b>)}<b>+8</b></div>, to: '/p4' },
     { cls: '', k: 'Lucky Game', title: 'Open the mystery boxes', body: <div class="chips"><b>🎁 Play now</b></div>, to: '/lucky' },
   ];
-  const [i, setI] = useState(0);
-  useEffect(() => { const id = setInterval(() => setI((x) => (x + 1) % slides.length), 4000); return () => clearInterval(id); }, []);
   return (
     <div>
       <TopBar />
-      <div class="slider">
-        {slides.map((s, k) => (
-          <button key={k} class={`slide ${s.cls} ${k === i ? 'on' : ''}`} onClick={() => s.to && go(s.to)} style="text-align:left;width:100%">
-            <small>{s.k}</small><div class="t">{s.title}</div>{s.body}
-          </button>
-        ))}
-        <div class="dots">{slides.map((_, k) => <i key={k} class={k === i ? 'on' : ''} />)}</div>
-      </div>
       <div class="sec"><b>Latest Results</b><span>{sample ? 'Sample data' : `${draws.length} draws`}</span></div>
       {!ready && <div class="empty">Loading…</div>}
       <div class="rc">
@@ -34,8 +24,8 @@ export function Home({ draws, ready, sample }) {
           const m = istMinutes();
           // small tag only: today → TODAY (before draw) / LIVE (draw time) / NEW (after); yesterday → NEW until today's draw starts
           let tag = null;
-          if (isToday) tag = m < LIVE_START ? <span class="tag td">TODAY</span> : m <= LIVE_END ? <span class="tag lv">LIVE</span> : <span class="tag">NEW</span>;
-          else if (k === 1 && m < LIVE_START) tag = <span class="tag">NEW</span>;
+          if (isToday) tag = m < LIVE_START ? <span class="tag td">TODAY</span> : m <= LIVE_END ? <span class="tag lv">LIVE</span> : <span class="tag nw">NEW</span>;
+          else if (k === 1 && m < LIVE_START) tag = <span class="tag nw">NEW</span>;
           return (
             <button key={d.date} class="rcard" onClick={() => go('/result/' + d.date)}>
               <div class="top"><span class="dchip">{fmtLong(d.date).replace(/^(\w{3})\w*,/, '$1,')}</span>{tag}</div>
