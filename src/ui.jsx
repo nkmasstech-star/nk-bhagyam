@@ -1,5 +1,5 @@
 import { createPortal } from 'preact/compat';
-export const APP = { name: 'NK Bhagyam', full: 'NK Bhagyam Predictions', slogan: 'Results · Analysis · Predictions', version: '0.1.0 test' };
+export const APP = { name: 'Bhagyam', full: 'Bhagyam', slogan: 'Results · Analysis · Predictions', version: '0.1.1 test' };
 export const go = (p) => { location.hash = p; };
 export const back = () => history.back();
 export const openMenu = () => window.dispatchEvent(new Event('nk-menu'));
@@ -26,7 +26,7 @@ export function TopBar() {
   return (
     <div class="bar">
       <button class="ib" aria-label="Menu" onClick={openMenu}><IconMenu /></button>
-      <div class="brand"><Logo /><b>NK <span>Bhagyam</span></b></div>
+      <div class="brand"><Logo size={34} /><div class="bt"><b>Bhagyam</b><small>Results · Analysis · Predictions</small></div></div>
       <button class="ib" aria-label="Notifications" onClick={() => go('/notifications')}><IconBell />{n > 0 && <i class="dot" />}</button>
     </div>
   );
@@ -43,7 +43,7 @@ export function BackBar({ title, right }) {
 export function Hero({ draw, fmt }) {
   return (
     <div class="hero">
-      <div class="brand"><Logo size={26} /><b>NK <span style="color:var(--gold)">Bhagyam</span></b></div>
+      <div class="brand"><Logo size={26} /><b>Bhagyam</b></div>
       <div class="gm">{draw ? draw.name : ''} <span>{draw ? draw.code : ''}</span></div>
       <div class="dt">{draw ? fmt(draw.date) : ''}</div>
     </div>

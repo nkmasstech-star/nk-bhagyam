@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import { TopBar, go } from '../ui.jsx';
-import { dayNum, monShort, fmtShort, istNow, dmy, RESULT_AT } from '../data/games.js';
+import { fmtShort, istNow, dmy, RESULT_AT, istMinutes, LIVE_START, LIVE_END } from '../data/games.js';
 import { predFor } from '../data/predictions.js';
 
 export function Home({ draws, ready, sample }) {
@@ -31,10 +31,15 @@ export function Home({ draws, ready, sample }) {
       <div class="rc">
         {draws.map((d, k) => {
           const isToday = d.date === today;
+          const m = istMinutes();
+          // small tag only: today → TODAY (before draw) / LIVE (draw time) / NEW (after); yesterday → NEW until today's draw starts
+          let tag = null;
+          if (isToday) tag = m < LIVE_START ? <span class="tag td">TODAY</span> : m <= LIVE_END ? <span class="tag lv">LIVE</span> : <span class="tag">NEW</span>;
+          else if (k === 1 && m < LIVE_START) tag = <span class="tag">NEW</span>;
           return (
-            <button key={d.date} class={isToday ? 'rcard today' : 'rcard'} onClick={() => go('/result/' + d.date)}>
-              <div class="top"><span class="mono">{d.code.split('-')[0]}</span>{isToday ? <span class="tag">TODAY</span> : k === 1 ? <span class="tag">NEW</span> : null}</div>
-              <div><div class="nm">{d.name}</div><div class="meta"><span>{isToday ? `Live ${RESULT_AT}` : fmtShort(d.date)}</span><span class="ser" style={isToday ? 'background:rgba(255,255,255,.15);color:#fff' : ''}>{d.code}</span></div></div>
+            <button key={d.date} class="rcard" onClick={() => go('/result/' + d.date)}>
+              <div class="top"><span class="mono">{d.code.split('-')[0]}</span>{tag}</div>
+              <div><div class="nm">{d.name}</div><div class="meta"><span>{isToday && m < LIVE_START ? `Live ${RESULT_AT}` : fmtShort(d.date)}</span><span class="ser">{d.code}</span></div></div>
             </button>
           );
         })}

@@ -29,7 +29,7 @@ function Splash({ onDone }) {
     <div class="splash">
       <div class="glow" />
       <div class="lg"><Logo size={130} /></div>
-      <div class="nmx">NK <span>Bhagyam</span></div>
+      <div class="nmx">Bhagyam</div>
       <div class="sl">{APP.slogan}</div>
     </div>
   );
@@ -44,7 +44,7 @@ export function App() {
 
   const refresh = () => loadDraws().then((r) => setData({ ...r, ready: true }));
   useEffect(() => { refresh(); }, []);
-  useEffect(() => { try { StatusBar.setStyle({ style: Style.Light }).catch(() => {}); StatusBar.setBackgroundColor({ color: '#F5F2EE' }).catch(() => {}); } catch (e) { /* web */ } }, []);
+  useEffect(() => { try { StatusBar.setStyle({ style: Style.Light }).catch(() => {}); StatusBar.setBackgroundColor({ color: '#F3F5FA' }).catch(() => {}); } catch (e) { /* web */ } }, []);
   useEffect(() => {
     const m = () => setMenu(true); const t = (e) => { setMsg(e.detail); setTimeout(() => setMsg(''), 2400); };
     addEventListener('nk-menu', m); addEventListener('nk-toast', t);
