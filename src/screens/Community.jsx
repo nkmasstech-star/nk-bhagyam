@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'preact/hooks';
 import { createPortal } from 'preact/compat';
 import { TopBar, go, toast, useBackClose } from '../ui.jsx';
-import { fmtShort, istNow, dmy } from '../data/games.js';
+import { fmtShort, istNow, dmy, parseDmy, GAMES } from '../data/games.js';
+import { history } from '../data/hist.js';
+export const drawOf = (date) => history().find((d) => d.date === date) || { name: GAMES[parseDmy(date).getDay()].name, code: GAMES[parseDmy(date).getDay()].code };
 import { Avatar } from '../social/avatars.jsx';
 import { Sheet } from '../social/Sheet.jsx';
 import { me, allPosts, visible, postedToday, canEdit, canDelete, createPost, editPost, deletePost, addPick, validSets, MAX_SETS, liked, toggleLike, likeCount, savedIds, toggleSave, followingOf, toggleFollow, blockedOf, toggleBlock, hidePost, reportPost, REPORT_REASONS, winStats, evalPost, userInfo, hasNewFollowing, markFollowingSeen } from '../social/store.js';
@@ -43,7 +45,7 @@ export function PostCard({ p, onEdit, hideOwn, hideFollow }) {
   const lk = liked(p.id); const sv = savedIds().includes(p.id); const fl = followingOf().includes(p.uid);
   const ev = evalPost(p); const st = winStats(p.uid);
   const [menu, setMenu] = useState(null); const [rep, setRep] = useState(false);
-  const share = async () => { const text = `${u.name}: ${p.sets.join(' ')} (Kerala draw ${fmtShort(p.day)})\nvia Malabar Results`; try { if (navigator.share) await navigator.share({ text }); else { await navigator.clipboard.writeText(text); toast('Copied'); } } catch (e) { /* cancelled */ } };
+  const share = async () => { const text = `${u.name}: ${p.sets.join(' ')} (${drawOf(p.day).name} ${drawOf(p.day).code} · ${fmtShort(p.day)})\nvia Malabar Results`; try { if (navigator.share) await navigator.share({ text }); else { await navigator.clipboard.writeText(text); toast('Copied'); } } catch (e) { /* cancelled */ } };
   const hitSet = new Set(ev.hits.map((h) => h.set));
   return (
     <div class="qpost">
@@ -57,7 +59,7 @@ export function PostCard({ p, onEdit, hideOwn, hideFollow }) {
         {!own && !hideFollow && <button class={fl ? 'qchip on sm' : 'qchip sm'} onClick={() => toggleFollow(p.uid)}>{fl ? 'Following' : 'Follow'}</button>}
       </div>
       <div class="qpick">
-        <div class="qpick-head"><b>Kerala Lottery</b><span class="meta" style="margin-left:auto">Draw {fmtShort(p.day)}</span></div>
+        <div class="qpick-head"><b>{fmtShort(p.day)}</b><span class="meta" style="margin-left:auto">{drawOf(p.day).name} · {drawOf(p.day).code}</span></div>
         <div class="qnums">{p.sets.map((s) => <div key={s} class={hitSet.has(s) ? 'qn hit' : 'qn'}>{s}<small>{s.length} digit</small></div>)}</div>
       </div>
       {ev.resolved && <div class={ev.won ? 'qres won' : 'qres'}>{ev.won ? `🎉 Matched · ${ev.hits.map((h) => `${h.set} (${h.prize})`).join(', ')}` : 'Did not match the result'}</div>}
@@ -88,7 +90,7 @@ export function Composer({ edit, onClose }) {
   const saveOnly = () => { const c = clean(); const e = validSets(c); if (e) { setErr(e); return; } addPick(c); toast('Saved to your profile'); onClose(); };
   return (
     <Sheet title={edit ? 'Edit your prediction' : 'Place your prediction'} onClose={onClose}>
-      <div class="meta" style="margin-bottom:10px">For today's draw · {fmtShort(dmy(istNow()))}</div>
+      <div class="qpick-head" style="margin-bottom:10px"><b>{fmtShort(dmy(istNow()))}</b><span class="meta" style="margin-left:auto">{drawOf(dmy(istNow())).name} · {drawOf(dmy(istNow())).code}</span></div>
       <div class="meta" style="margin-bottom:6px">Your numbers (up to 4) · 3 digits = last 3 of 1st prize, 4 digits = any prize ₹5,000 to ₹100</div>
       <div class="qnumin">{sets.map((s, i) => (
         <div key={i} class="qnumin-row">

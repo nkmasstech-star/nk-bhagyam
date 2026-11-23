@@ -65,7 +65,7 @@ export function Result({ draws, date }) {
   const lower = res && res.lower && res.lower.length ? res.lower : TEMPLATE;
   const wait = <Wait />;
   return (
-    <div>
+    <div class="resultpage">
       <BackBar title={`${draw.name} ${draw.code}`} right={live ? <span class="live">LIVE</span> : <span style="width:42px" />} />
       {live && <button class={voice ? 'vtog on' : 'vtog'} onClick={tgVoice}>{voice ? '🔊 Voice on · new numbers are read aloud' : '🔇 Voice off · tap to hear new numbers'}</button>}
       <Hero draw={draw} fmt={fmtLong} />

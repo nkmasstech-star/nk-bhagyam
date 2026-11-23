@@ -11,6 +11,8 @@ import { Predictions } from './screens/Predictions.jsx';
 import { ThreeDigit, FourDigit } from './screens/Digits.jsx';
 import { A4Home, A4High, A4Repeated, A4Formats, A4Power } from './screens/A4.jsx';
 import { setHistory } from './data/hist.js';
+import { Spend } from './screens/Spend.jsx';
+import { loadResult } from './data/results.js';
 import { hasNewFollowing } from './social/store.js';
 import { dmy, istNow } from './data/games.js';
 import { Splash, Login, NeedLogin, auth, isMember } from './screens/Login.jsx';
@@ -41,7 +43,11 @@ export function App() {
   const [, setTabsV] = useState(0);
   useEffect(() => { const f = () => setTabsV((n) => n + 1); addEventListener('nk-tabs', f); return () => removeEventListener('nk-tabs', f); }, []);
 
-  const refresh = () => loadDraws().then((r) => { setHistory(r.draws); setData({ ...r, ready: true }); });
+  const refresh = () => loadDraws().then((r) => {
+    setHistory(r.draws); setData({ ...r, ready: true });
+    // warm up the newest results in the background so opening a card is instant
+    setTimeout(() => r.draws.slice(0, 6).forEach((d, i) => setTimeout(() => loadResult(d).catch(() => {}), i * 250)), 400);
+  });
   useEffect(() => { refresh(); }, []);
   useEffect(() => {
     const sync = () => { try { const dark = document.documentElement.dataset.mode === 'dark'; const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light }).catch(() => {}); StatusBar.setBackgroundColor({ color: bg }).catch(() => {}); } catch (e) { /* web */ } };
@@ -82,7 +88,7 @@ export function App() {
     case 'predictions': screen = <Predictions draws={draws} />; nav = true; break;
     case 'nk': screen = <NKHome draws={draws} />; nav = true; break;
     case 'freq': screen = <Frequency draws={draws} />; break;
-    case 'monthly': screen = <Monthly draws={draws} />; break;
+    case 'monthly': screen = <Monthly draws={draws} month={seg[1]} />; break;
     case 'box': screen = <BoxCreator />; break;
     case '4d': screen = <FourDigit draws={draws} tab />; nav = true; break;
     case 'p3': screen = <ThreeDigit draws={draws} />; break;
@@ -99,6 +105,7 @@ export function App() {
     case 'notifications': screen = <Notifications />; break;
     case 'legal': screen = <Legal kind={seg[1]} />; break;
     case 'user': screen = member ? <Profile uid={seg[1]} /> : <NeedLogin what="Community" />; break;
+    case 'spend': screen = member ? <Spend /> : <NeedLogin what="your Profile" />; break;
     case 'howto': screen = <HowTo />; break;
     case 'faq': screen = <Faq />; break;
     case 'feedback': screen = <Feedback />; break;

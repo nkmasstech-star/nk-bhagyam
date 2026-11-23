@@ -8,7 +8,9 @@ import '@fontsource/cinzel-decorative/900.css';
 import '@fontsource/poppins/400.css';
 import './styles.css';
 import { App } from './App.jsx';
+import { startI18n } from './i18n.js';
 import { applyTheme, DEFAULT_THEME } from './data/themes.js';
 let saved = DEFAULT_THEME; try { saved = JSON.parse(localStorage.getItem('nk_theme')) || DEFAULT_THEME; } catch (e) { /* ignore */ }
 applyTheme(saved);
 render(<App />, document.getElementById('app'));
+startI18n();

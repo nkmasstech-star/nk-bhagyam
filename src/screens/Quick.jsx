@@ -9,7 +9,7 @@ export const IconScan = () => <svg viewBox="0 0 24 24" fill="none" stroke="curre
 
 export const QuickFab = ({ onClick, low }) => createPortal(<button class={low ? "quickfab low" : "quickfab"} onClick={onClick} aria-label="Quick ticket check"><IconScan /><span>Quick</span></button>, document.body);
 
-function Pop({ title, onClose, children }) {
+export function Pop({ title, onClose, children }) {
   useBackClose(onClose);
   return createPortal(
     <div class="qpop-wrap"><div class="qsheet-scrim" onClick={onClose} />

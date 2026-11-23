@@ -1,8 +1,8 @@
 import { useState } from 'preact/hooks';
-import { TopBar, go, IconSearch } from '../ui.jsx';
+import { TopBar, go, IconSearch, ls } from '../ui.jsx';
 import { fmtLong, istNow, dmy, RESULT_AT, istMinutes, LIVE_START, LIVE_END, parseDmy } from '../data/games.js';
 import { Sheet } from '../social/Sheet.jsx';
-import { QuickFab, QuickScan } from './Quick.jsx';
+import { QuickFab, QuickScan, Pop } from './Quick.jsx';
 
 const IconList = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="7" height="7" rx="1.5" /><rect x="13" y="4" width="7" height="7" rx="1.5" /><rect x="4" y="13" width="7" height="7" rx="1.5" /><rect x="13" y="13" width="7" height="7" rx="1.5" /></svg>;
 const MON = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -24,8 +24,10 @@ function matches(d, q) {
 function Card({ d, k, today }) {
   const isToday = d.date === today; const m = istMinutes();
   let tag = null;
-  if (isToday) tag = m < LIVE_START ? <span class="tag td">TODAY</span> : m <= LIVE_END ? <span class="tag lv">LIVE</span> : <span class="tag nw">NEW</span>;
-  else if (k === 1 && m < LIVE_START) tag = <span class="tag nw">NEW</span>;
+  // today's card only appears from 3:00 PM: TODAY until the draw starts (3:07), LIVE while numbers come in, NEW once complete
+  const done = (ls.get('nk_res_' + d.date, null) || {}).complete;
+  if (isToday) tag = done ? <span class="tag nw">NEW</span> : m < 15 * 60 + 7 ? <span class="tag td">TODAY</span> : <span class="tag lv">LIVE</span>;
+  else if (k === 0) tag = <span class="tag nw">NEW</span>;
   return (
     <button class="rcard" onClick={() => go('/result/' + d.date)}>
       <div class="top"><span class="dchip">{fmtLong(d.date).replace(/^(\w{3})\w*,/, '$1,')}</span>{tag}</div>
@@ -40,7 +42,7 @@ function Search({ draws, onClose }) {
   const list = pick ? draws.filter((d) => d.date === pick) : q ? draws.filter((d) => matches(d, q)) : [];
   const onDate = (v) => { if (!v) { setPick(''); return; } const [y, m, dd] = v.split('-'); setPick(`${dd}-${m}-${y}`); setQ(''); };
   return (
-    <Sheet title="Find a result" onClose={onClose}>
+    <Pop title="Find a result" onClose={onClose}>
       <input class="qinput" autofocus placeholder="Type a date, e.g. 21-11-2026 or 21 Nov" value={q} onInput={(e) => { setQ(e.currentTarget.value); setPick(''); }} />
       <div class="meta" style="margin:10px 2px 6px">or pick from the calendar</div>
       <input class="qinput" type="date" onInput={(e) => onDate(e.currentTarget.value)} />
@@ -48,20 +50,23 @@ function Search({ draws, onClose }) {
         {list.slice(0, 20).map((d) => <Card key={d.date} d={d} k={-1} today="" />)}
       </div>
       {(q || pick) && list.length === 0 && <div class="meta ctr" style="padding:14px">No result found for that date.</div>}
-    </Sheet>
+    </Pop>
   );
 }
 
-export function Home({ draws, ready }) {
+export function Home({ draws: all, ready, onRefresh }) {
   const today = dmy(istNow());
+  const draws = istMinutes() < 15 * 60 ? all.filter((d) => d.date !== today) : all;
+  const [spin, setSpin] = useState(0);
+  const reload = () => { const sc = document.scrollingElement; if (sc) sc.scrollTo({ top: 0, behavior: 'smooth' }); setSpin((x) => x + 1); if (onRefresh) onRefresh(); };
   const [find, setFind] = useState(false);
   const [quick, setQuick] = useState(false);
   return (
     <div>
       <div class="sticky-top"><TopBar />
-      <div class="hcards"><button class="hcard" onClick={() => document.querySelector('.screen') && document.querySelector('.screen').scrollTo({ top: 0, behavior: 'smooth' })}><IconList /><span>Latest Results</span></button><button class="hcard" aria-label="Search results by date" onClick={() => setFind(true)}><IconSearch /><span>Search date</span></button></div></div>
+      <div class="hcards"><button class="hcard" onClick={reload}><span key={spin} class={spin ? 'spin1' : ''}><IconList /></span><span>Latest Results</span></button><button class="hcard" aria-label="Search results by date" onClick={() => setFind(true)}><IconSearch /><span>Search date</span></button></div></div>
       {!ready && <div class="empty">Loading…</div>}
-      <div class="rc">{draws.map((d, k) => <Card key={d.date} d={d} k={k} today={today} />)}</div>
+      <div class="rc" key={'rc' + spin}>{draws.map((d, k) => <Card key={d.date} d={d} k={k} today={today} />)}</div>
       {find && <Search draws={draws} onClose={() => setFind(false)} />}
       {ready && <QuickFab onClick={() => setQuick(true)} />}
       {quick && <QuickScan draws={draws} onClose={() => setQuick(false)} />}

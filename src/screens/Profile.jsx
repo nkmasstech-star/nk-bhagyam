@@ -64,7 +64,7 @@ export function Profile({ uid }) {
         <div class="qpf">
           <div class="qpf-cover" />
           <div class="qpf-main">
-            <button class="plain qpf-av" disabled={!own} onClick={() => own && setPicker(true)} aria-label="Change avatar"><Avatar id={u.avatar} size={88} ring />{own && <i class="qpf-edit">✎</i>}</button>
+            <button class="plain qpf-av" disabled={!own} onClick={() => own && setPicker(true)} aria-label="Change avatar"><Avatar id={u.avatar} size={62} ring />{own && <i class="qpf-edit">✎</i>}</button>
             <div class="qpf-name">{u.name}</div>
             <div class="qpf-stats">
               <div><b>{st.posts}</b><span>Posts</span></div>
@@ -74,7 +74,7 @@ export function Profile({ uid }) {
             </div>
             {st.pct == null && <div class="meta" style="font-size:12px;text-align:center">Winning % shows after 4 checked posts. Checked: {st.resolved}</div>}
             {own
-              ? <div class="qpf-btns"><button class="qbtn ghost" onClick={() => setNameOpen(true)}>Edit profile</button><button class="qbtn" onClick={() => (postedToday() ? toast('You have already posted today. See your post below.') : setComp({}))}>Place your prediction</button></div>
+              ? <div class="qpf-btns"><button class="qbtn ghost spendbtn" onClick={() => go('/spend')}>💰 Spend Tracker</button><button class="qbtn" onClick={() => (postedToday() ? toast('You have already posted today. See your post below.') : setComp({}))}>Place your prediction</button></div>
               : <button class={fl ? 'qbtn ghost' : 'qbtn'} onClick={() => toggleFollow(id)}>{fl ? 'Following' : 'Follow'}</button>}
           </div>
         </div>
@@ -122,22 +122,36 @@ function UpdateCard() {
   );
 }
 
+const LANG_LIST = [['en', 'English'], ['ml', 'മലയാളം'], ['ta', 'தமிழ்'], ['hi', 'हिन्दी']];
+const clearKeys = (keys) => keys.forEach((k) => localStorage.removeItem(k));
 export function Settings() {
   const [theme, setTheme] = useState(THEMES[ls.get('nk_theme', DEFAULT_THEME)] ? ls.get('nk_theme', DEFAULT_THEME) : DEFAULT_THEME);
   const pick = (id) => { setTheme(id); ls.set('nk_theme', id); applyTheme(id); window.dispatchEvent(new Event('nk-theme')); };
   const [push, setPush] = useState(ls.get('nk_push', true));
   const [sound, setSound] = useState(ls.get('nk_sound', true));
-  const [lang, setLang] = useState(ls.get('nk_lang', 'en'));
+  const lang = ls.get('nk_lang', 'en');
   const tg = (k, v, set) => { set(v); ls.set(k, v); };
   const [tabs, setTabs] = useState({ nk: true, '4d': true, community: true, ...ls.get('nk_tabs', {}) });
   const tgTab = (k) => { const n = { ...tabs, [k]: !tabs[k] }; setTabs(n); ls.set('nk_tabs', n); window.dispatchEvent(new Event('nk-tabs')); };
+  const [picker, setPicker] = useState(false); const [nameOpen, setNameOpen] = useState(false); const [confirmDel, setConfirmDel] = useState(false);
+  const [, tick] = useState(0);
+  const member = isMember(); const user = me();
+  const setLanguage = (k) => { if (k === lang) return; ls.set('nk_lang', k); location.reload(); };
+  const del = (label, keys) => { if (confirm(`${label}? This cannot be undone.`)) { clearKeys(keys); window.dispatchEvent(new Event('nk-social')); tick((x) => x + 1); toast('Deleted'); } };
   return (
     <div>
       <BackBar title="Settings" />
       <UpdateCard />
-      <div class="list"><div class="lr"><span class="li2">👤</span><b>{isMember() ? 'Signed in' : 'Guest mode'}<br /><small>{isMember() ? 'Google account' : 'Sign in to use Community and Profile'}</small></b>{isMember() ? <button class="sbtn" onClick={() => { signOut(); go('/home'); }}>Sign out</button> : <button class="sbtn" onClick={() => { signInGoogle(); }}>Sign in</button>}</div></div>
+      {member && <div class="list">
+        <div class="lr tcol"><b>Edit profile</b></div>
+        <button class="lr" onClick={() => setNameOpen(true)}><span class="li2">✎</span><b>Name<br /><small>{user.name} · {NAME_EDITS - (user.nameEdits || 0)} changes left</small></b><span>›</span></button>
+        <button class="lr" onClick={() => setPicker(true)}><span class="li2"><Avatar id={user.avatar} size={30} /></span><b>Profile sticker<br /><small>{AVATAR_EDITS - (user.avatarEdits || 0)} changes left</small></b><span>›</span></button>
+      </div>}
       <div class="list">
         <div class="lr tcol"><b>Theme · {THEMES[theme] ? THEMES[theme].name : ''}</b><div class="themes">{Object.entries(THEMES).map(([id, t]) => <button key={id} class={theme === id ? 'on' : ''} aria-label={t.name} onClick={() => pick(id)}><i style={`background:${t.sw[0]}`} /><i style={`background:${t.sw[1]}`} /></button>)}</div></div>
+      </div>
+      <div class="list">
+        <div class="lr tcol"><b>Language</b><div class="langs">{LANG_LIST.map(([k, l]) => <button key={k} class={lang === k ? 'on notr' : 'notr'} onClick={() => setLanguage(k)}>{l}</button>)}</div></div>
       </div>
       <div class="list">
         <div class="lr tcol"><b>Customize app<br /><small>Show or hide tabs in the bottom menu</small></b></div>
@@ -146,15 +160,26 @@ export function Settings() {
       <div class="list">
         <div class="lr"><span class="li2">🔔</span><b>Notifications<br /><small>Results and predictions alerts</small></b><button class={push ? 'sw on' : 'sw'} onClick={() => tg('nk_push', !push, setPush)} /></div>
         <div class="lr"><span class="li2">🔊</span><b>Game sounds</b><button class={sound ? 'sw on' : 'sw'} onClick={() => tg('nk_sound', !sound, setSound)} /></div>
-        <div class="lr"><span class="li2">அ</span><b>Language</b><div class="seg">{[['en', 'English'], ['ta', 'தமிழ்'], ['ml', 'മലയാളം']].map(([k, l]) => <button key={k} class={lang === k ? 'on' : ''} onClick={() => { tg('nk_lang', k, setLang); if (k !== 'en') toast('Tamil and Malayalam coming soon'); }}>{l}</button>)}</div></div>
       </div>
       <div class="list">
         <button class="lr" onClick={() => go('/legal/privacy')}><span class="li2">🔒</span><b>Privacy Policy</b><span>›</span></button>
         <button class="lr" onClick={() => go('/legal/terms')}><span class="li2">📄</span><b>Terms &amp; Conditions</b><span>›</span></button>
         <button class="lr" onClick={() => go('/legal/disclaimer')}><span class="li2">ⓘ</span><b>Disclaimer</b><span>›</span></button>
+      </div>
+      <div class="list">
+        <div class="lr tcol"><b>Delete my data</b></div>
+        {[['Delete my posts', ['nk_posts']], ['Delete my saved posts', ['nk_saved']], ['Delete my saved lucky numbers', ['nk_lucky']], ['Delete my saved predictions', ['nk_picks']], ['Delete my spend tracker', ['nk_spend', 'nk_spend_budget']]].map(([l, k]) => <button key={l} class="lr" onClick={() => del(l, k)}><span class="li2">🗑</span><b>{l}</b><span>›</span></button>)}
         <button class="lr" onClick={() => { Object.keys(localStorage).filter((k) => k.startsWith('nk_res_')).forEach((k) => localStorage.removeItem(k)); toast('Saved results cleared'); }}><span class="li2">🧹</span><b>Clear saved results</b><span>›</span></button>
       </div>
+      <div class="list">
+        <div class="lr tcol"><b>Account</b></div>
+        <div class="lr"><span class="li2">👤</span><b>{member ? 'Signed in' : 'Guest mode'}<br /><small>{member ? 'Google account' : 'Sign in to use Community and Profile'}</small></b>{member ? <button class="sbtn" onClick={() => { signOut(); go('/home'); }}>Sign out</button> : <button class="sbtn" onClick={() => { signInGoogle(); }}>Sign in</button>}</div>
+        {member && !confirmDel && <button class="lr" onClick={() => setConfirmDel(true)}><span class="li2">⚠</span><b style="color:#E5484D">Delete my account</b><span>›</span></button>}
+        {member && confirmDel && <div class="lr tcol"><b>This permanently deletes your profile, posts and saved items. It cannot be undone.</b><div style="display:flex;gap:8px;margin-top:8px;width:100%"><button class="qbtn ghost" style="height:42px" onClick={() => setConfirmDel(false)}>Cancel</button><button class="qbtn" style="height:42px;background:#E5484D" onClick={() => { clearKeys(['nk_me', 'nk_posts', 'nk_saved', 'nk_likes', 'nk_follow', 'nk_picks', 'nk_lucky', 'nk_spend', 'nk_spend_budget', 'nk_blocks', 'nk_hide', 'nk_reports']); signOut(); toast('Account deleted'); go('/home'); }}>Delete</button></div></div>}
+      </div>
       <div class="disc">{APP.full} · version {APP.version}</div>
+      {picker && <AvatarPicker current={user.avatar} left={AVATAR_EDITS - (user.avatarEdits || 0)} onClose={() => { setPicker(false); tick((x) => x + 1); }} />}
+      {nameOpen && <NameSheet user={user} onClose={() => { setNameOpen(false); tick((x) => x + 1); }} />}
     </div>
   );
 }
