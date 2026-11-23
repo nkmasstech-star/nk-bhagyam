@@ -134,3 +134,7 @@ export function winStats(uid) {
   posts.forEach((p) => { const e = evalPost(p); if (e.resolved) { resolved += 1; if (e.won) won += 1; } });
   return { posts: posts.length, resolved, won, pct: resolved >= FOLLOW_MIN ? Math.round((won / resolved) * 100) : null };
 }
+
+// red dot: a player you follow posted after you last looked at the Following tab
+export const hasNewFollowing = () => { const f = followingOf(); if (!f.length) return false; const seen = read('nk_seen_follow', 0); return allPosts().some((p) => f.includes(p.uid) && p.at > seen && p.at <= Date.now()); };
+export const markFollowingSeen = () => { write('nk_seen_follow', Date.now()); };

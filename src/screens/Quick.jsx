@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { createPortal } from 'preact/compat';
-import { toast } from '../ui.jsx';
-import { inr, fmtLong } from '../data/games.js';
+import { toast, useBackClose } from '../ui.jsx';
+import { inr, fmtLong, parseDmy } from '../data/games.js';
 import { loadResult } from '../data/results.js';
 import { parseTicket, checkFull, checkLast4, readScan } from '../data/ticket.js';
 
@@ -10,6 +10,7 @@ export const IconScan = () => <svg viewBox="0 0 24 24" fill="none" stroke="curre
 export const QuickFab = ({ onClick, low }) => createPortal(<button class={low ? "quickfab low" : "quickfab"} onClick={onClick} aria-label="Quick ticket check"><IconScan /><span>Quick</span></button>, document.body);
 
 function Pop({ title, onClose, children }) {
+  useBackClose(onClose);
   return createPortal(
     <div class="qpop-wrap"><div class="qsheet-scrim" onClick={onClose} />
       <div class="qpop" role="dialog" aria-label={title}>
@@ -70,11 +71,30 @@ export function QuickCheck({ draw, res, onClose }) {
         <button class={mode === 'fast' ? 'on' : ''} onClick={() => { setMode('fast'); setV(''); setO(null); }}>⚡ Fast · last 4</button>
       </div>
       {mode === 'full'
-        ? <input class="qinput big tk" autofocus placeholder="SM 123456" maxLength={10} value={v} onInput={(e) => { const c = e.currentTarget.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''); e.currentTarget.value = c; setV(c); setO(null); }} />
-        : <input class="qinput big" autofocus inputMode="numeric" placeholder="0000" maxLength={4} value={v} onInput={(e) => { const c = e.currentTarget.value.replace(/\D/g, '').slice(0, 4); e.currentTarget.value = c; setV(c); setO(null); }} />}
+        ? <input class="qinput big tk" autofocus placeholder="Type ticket number" maxLength={10} value={v} onInput={(e) => { const c = e.currentTarget.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''); e.currentTarget.value = c; setV(c); setO(null); }} />
+        : <input class="qinput big" autofocus inputMode="numeric" placeholder="Last 4 digits" maxLength={4} value={v} onInput={(e) => { const c = e.currentTarget.value.replace(/\D/g, '').slice(0, 4); e.currentTarget.value = c; setV(c); setO(null); }} />}
       <div class="meta" style="font-size:12px;margin:6px 2px 12px">{mode === 'full' ? 'Checks every prize, 1st prize to ₹100.' : 'Checks the ₹5,000 to ₹100 prizes by the last 4 digits.'}</div>
       <button class="qbtn" onClick={run}>Check</button>
       <Outcome o={o} />
+    </Pop>
+  );
+}
+
+const MS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const WD = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+function DrawPicker({ draws, value, onPick, onClose }) {
+  let lastM = '';
+  return (
+    <Pop title="Choose draw date" onClose={onClose}>
+      <div class="dplist">{draws.slice(0, 60).map((d) => {
+        const t = parseDmy(d.date); const m = `${MS[t.getMonth()]} ${t.getFullYear()}`; const head = m !== lastM; lastM = m;
+        return [head ? <div key={'h' + m} class="dpm">{m}</div> : null,
+          <button key={d.date} class={value === d.date ? 'dprow on' : 'dprow'} onClick={() => onPick(d.date)}>
+            <span class="qdd"><b>{t.getDate()}</b><small>{MS[t.getMonth()]}</small></span>
+            <span class="qdn"><b>{d.name}</b><small>{WD[t.getDay()]}</small></span>
+            <i class="dpc">{d.code}</i>
+          </button>];
+      })}</div>
     </Pop>
   );
 }
@@ -84,7 +104,7 @@ export function QuickScan({ draws, onClose }) {
   const [busy, setBusy] = useState(false);
   const [raw, setRaw] = useState('');
   const [v, setV] = useState(''); const [pick, setPick] = useState('');
-  const [o, setO] = useState(null);
+  const [o, setO] = useState(null); const [picker, setPicker] = useState(false);
   const check = async (ticketText, draw) => {
     const t = parseTicket(ticketText);
     if (!t) { setO({ err: 'Could not read the ticket number. Type it below.' }); return; }
@@ -121,14 +141,15 @@ export function QuickScan({ draws, onClose }) {
     <Pop title="Quick ticket check" onClose={onClose}>
       <button class="qscan" onClick={scan} disabled={busy}><IconScan /><b>Scan ticket</b><span>Point the camera at the barcode on your ticket</span></button>
       <div class="qor"><span>or type it</span></div>
-      <input class="qinput big tk" placeholder="SM 123456" maxLength={10} value={v} onInput={(e) => { const c = e.currentTarget.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''); e.currentTarget.value = c; setV(c); setO(null); }} />
-      <select class="qinput" style="margin-top:8px" value={pick} onChange={(e) => { setPick(e.currentTarget.value); setO(null); }}>
-        <option value="">Choose draw date</option>
-        {draws.slice(0, 60).map((d) => <option key={d.date} value={d.date}>{fmtLong(d.date)} · {d.name} {d.code}</option>)}
-      </select>
+      <input class="qinput big tk" placeholder="Type ticket number" maxLength={10} value={v} onInput={(e) => { const c = e.currentTarget.value.toUpperCase().replace(/[^A-Z0-9 ]/g, ''); e.currentTarget.value = c; setV(c); setO(null); }} />
+      <button class={draw ? 'qdraw on' : 'qdraw'} onClick={() => setPicker(true)}>
+        {draw ? <><span class="qdd"><b>{parseDmy(draw.date).getDate()}</b><small>{MS[parseDmy(draw.date).getMonth()]}</small></span><span class="qdn"><b>{draw.name}</b><small>{WD[parseDmy(draw.date).getDay()]} · {draw.code}</small></span><i>Change</i></>
+          : <><span class="qdn"><b>Choose draw date</b><small>Select the date printed on your ticket</small></span><i>›</i></>}
+      </button>
       <button class="qbtn" style="margin-top:12px" disabled={busy} onClick={() => check(v, draw)}>{busy ? 'Checking…' : 'Check ticket'}</button>
       <Outcome o={o} />
       {raw && <div class="meta" style="font-size:11px;margin-top:10px;word-break:break-all">Scanned code: {raw}</div>}
+      {picker && <DrawPicker draws={draws} value={pick} onPick={(x) => { setPick(x); setO(null); setPicker(false); }} onClose={() => setPicker(false)} />}
     </Pop>
   );
 }

@@ -12,6 +12,7 @@ const CARDS = [
   ['/poll', IcVote, 'Voting Numbers'],
   ['/lucky', IcGift, 'Lucky Number Generator'],
 ];
+export const NkBanner = () => <div class="nkban"><img src="./nk-logo.png" alt="NK Guessing" /><div><b>NK Guessing</b><span>Analysis &amp; Predictions</span></div></div>;
 export const HubTile = ({ to, Ic, h }) => <button class="htile" onClick={() => go(to)}><span class="hti"><Ic /></span><h3>{h}</h3></button>;
 
 // NK tab: hub of cards
@@ -20,7 +21,7 @@ export function NKHome({ draws }) {
   return (
     <div>
       <TopBar />
-      <div class="nkban"><img src="./nk-logo.png" alt="NK Guessing" /><div><b>NK Guessing</b><span>Analysis &amp; Predictions</span></div></div>
+      <NkBanner />
       <div class="tiles">
         {CARDS.map(([to, Ic, h]) => <HubTile key={to} to={to} Ic={Ic} h={h} />)}
       </div>

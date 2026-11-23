@@ -1,12 +1,22 @@
 // Predictions (sample for now). 3 Digit card values will come from the admin page,
 // 4 Digit (₹5,000 and below) values from the history formula (to be added).
 import { dummyResult } from './dummy.js';
+import { top6For } from './hist.js';
 
 let seed = 1;
 const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
 const d1 = () => String(Math.floor(rnd() * 10));
 const pick = (n, len) => Array.from({ length: n }, () => Array.from({ length: len }, d1).join(''));
-const seedOf = (date) => { seed = parseInt(date.replace(/-/g, ''), 10) % 233280 + 11; };
+const seedOf = (date) => { seed = parseInt(date.replace(/\D/g, ''), 10) % 233280 + 11; };
+
+// 4 Digit Predictions (Nehru's formula): top 6 digits from the last 30 draws' ₹5,000 + ₹2,000 (or ₹1,000) prizes,
+// each of A, B, C, D picks one of those 6 digits (mixed) -> 12 different numbers
+export function list4For(date) {
+  const t6 = top6For(date); const sv = seed; seedOf(date + '4');
+  const out = new Set(); let guard = 0;
+  while (out.size < 12 && guard < 500) { guard += 1; out.add([0, 1, 2, 3].map(() => t6[Math.floor(rnd() * 6)]).join('')); }
+  seed = sv; return [...out].sort();
+}
 
 export function predFor(date) {
   seedOf(date);
@@ -14,7 +24,7 @@ export function predFor(date) {
   const board = []; while (board.length < 2) { const x = d1(); if (!board.includes(x)) board.push(x); }
   const box = []; while (box.length < 3) { const x = d1(); if (!box.includes(x)) box.push(x); }
   const p3 = pick(3, 3);
-  return { cols, board, box: box.join(''), p3, bc: p3.map((x) => x.slice(1)), p4: p3.map((x) => d1() + x), list4: [...new Set(pick(14, 4))].slice(0, 12).sort() };
+  return { cols, board, box: box.join(''), p3, bc: p3.map((x) => x.slice(1)), p4: p3.map((x) => d1() + x), list4: list4For(date) };
 }
 
 // make some sample history days win so the marks can be seen

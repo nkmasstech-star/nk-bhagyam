@@ -1,7 +1,7 @@
 import { BackBar, TopBar, Hero, Note, go, IconClock } from '../ui.jsx';
 import { fmtLong, fmtShort, istNow, dmy } from '../data/games.js';
 import { predFor } from '../data/predictions.js';
-import { HubTile } from './NK.jsx';
+import { HubTile, NkBanner } from './NK.jsx';
 import { IcGift, IcPulse } from './icons2.jsx';
 
 const todayDraw = (draws) => draws.find((d) => d.date === dmy(istNow())) || draws[0];
@@ -32,6 +32,7 @@ export function ThreeDigit({ draws }) {
   return (
     <div>
       <BackBar title="3 Digit Guessing" />
+      <NkBanner />
       <Poster d={d}>
         <Ttl>ABC Board Guessing</Ttl>
         <div class="nkabc"><div class="hd">{['A', 'B', 'C'].map((x) => <b key={x}>{x}</b>)}</div>
@@ -43,6 +44,7 @@ export function ThreeDigit({ draws }) {
         <Ttl>Box Number</Ttl>
         <div class="nkn"><b>{p.box}</b></div>
       </Poster>
+      <NkBanner />
       <Poster d={d}><Ttl>3 Digit Guessing</Ttl><Nums list={p.p3} /></Poster>
       <Poster d={d}><Ttl>BC Board Guessing</Ttl><Nums list={p.bc} /></Poster>
       <Poster d={d}><Ttl>4 Digit Guessing</Ttl><div class="w4"><Nums list={p.p4} /></div></Poster>
@@ -57,8 +59,8 @@ export function FourDigit({ draws, tab }) {
   return (
     <div>
       <Head tab={tab} title="4 Digit Prediction" />
-      <div class="card"><div class="band">4 Digit Predictions</div>
-        <div class="sub4">{d ? `${fmtShort(d.date)} · ${d.name} · ${d.code}` : ''}</div>
+      {d && <div class="forchip"><span>Prediction for</span><b>{fmtShort(d.date)}</b><i>{d.name} · {d.code}</i></div>}
+      <div class="card" style="margin-top:0"><div class="band">4 Digit Predictions</div>
         <div class="grid">{p.list4.map((n) => <span key={n}>{n}</span>)}</div></div>
       <button class="row-link" onClick={() => go('/h4')}><div><b>History Predictions</b><small>Winning numbers circled</small></div><span>›</span></button>
       {tab && <Extra />}
@@ -67,11 +69,3 @@ export function FourDigit({ draws, tab }) {
   );
 }
 
-export function Analytics4() {
-  return (
-    <div>
-      <BackBar title="4 Digit Analytics" />
-      <div class="empty" style="margin-top:20px">4 digit analytics is coming soon.</div>
-    </div>
-  );
-}

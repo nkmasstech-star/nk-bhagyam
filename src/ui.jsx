@@ -1,8 +1,15 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 import { createPortal } from 'preact/compat';
 export const APP = { name: 'Malabar Results', full: 'Malabar Results', slogan: 'Results · Analysis · Predictions', version: '0.1.5 test' };
 export const go = (p) => { location.hash = p; };
 export const back = () => history.back();
+// popups register here so the phone Back button closes the top popup instead of leaving the screen/app
+const POPS = [];
+export function useBackClose(fn) {
+  const ref = useRef(fn); ref.current = fn;
+  useEffect(() => { const e = () => ref.current && ref.current(); POPS.push(e); return () => { const i = POPS.indexOf(e); if (i >= 0) POPS.splice(i, 1); }; }, []);
+}
+export const closeTopPopup = () => { const e = POPS[POPS.length - 1]; if (e) { e(); return true; } return false; };
 export const openMenu = () => window.dispatchEvent(new Event('nk-menu'));
 export const toast = (m) => window.dispatchEvent(new CustomEvent('nk-toast', { detail: m }));
 export const ls = {
@@ -50,12 +57,12 @@ export function BackBar({ title, right }) {
     </div>
   );
 }
-export function Hero({ draw, fmt }) {
+export function Hero({ draw, fmt, small }) {
   return (
-    <div class="hero">
-      <div class="brand"><Logo size={26} /><b class="bn">Malabar <span>Results</span></b></div>
-      <div class="gm">{draw ? draw.name : ''} <span>{draw ? draw.code : ''}</span></div>
-      <div class="dt">{draw ? fmt(draw.date) : ''}</div>
+    <div class={small ? 'hero sm' : 'hero'}>
+      <div class="brand"><Logo size={22} /><b class="bn">Malabar <span>Results</span></b></div>
+      <div class="hdt">{draw ? fmt(draw.date) : ''}</div>
+      <div class="hgm">{draw ? draw.name : ''} <span>{draw ? draw.code : ''}</span></div>
     </div>
   );
 }

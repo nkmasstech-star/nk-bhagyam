@@ -2,6 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { THEMES, DEFAULT_THEME, applyTheme } from '../data/themes.js';
 import { Updater, APK_URL, currentBuild, latestBuild } from '../data/update.js';
 import { BackBar, go, ls, toast, APP } from '../ui.jsx';
+import { isMember, signOut, signInGoogle } from './Login.jsx';
 import { fmtShort, dmy } from '../data/games.js';
 import { Avatar, AVATAR_THEMES } from '../social/avatars.jsx';
 import { Sheet } from '../social/Sheet.jsx';
@@ -134,6 +135,7 @@ export function Settings() {
     <div>
       <BackBar title="Settings" />
       <UpdateCard />
+      <div class="list"><div class="lr"><span class="li2">👤</span><b>{isMember() ? 'Signed in' : 'Guest mode'}<br /><small>{isMember() ? 'Google account' : 'Sign in to use Community and Profile'}</small></b>{isMember() ? <button class="sbtn" onClick={() => { signOut(); go('/home'); }}>Sign out</button> : <button class="sbtn" onClick={() => { signInGoogle(); }}>Sign in</button>}</div></div>
       <div class="list">
         <div class="lr tcol"><b>Theme · {THEMES[theme] ? THEMES[theme].name : ''}</b><div class="themes">{Object.entries(THEMES).map(([id, t]) => <button key={id} class={theme === id ? 'on' : ''} aria-label={t.name} onClick={() => pick(id)}><i style={`background:${t.sw[0]}`} /><i style={`background:${t.sw[1]}`} /></button>)}</div></div>
       </div>

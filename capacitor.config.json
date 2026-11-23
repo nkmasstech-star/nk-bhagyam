@@ -2,10 +2,10 @@
   "appId": "com.nkbhagyam.app",
   "appName": "Malabar Results",
   "webDir": "dist",
-  "backgroundColor": "#0B1020",
+  "backgroundColor": "#2479C8",
   "plugins": {
     "CapacitorHttp": { "enabled": true },
-    "SplashScreen": { "launchShowDuration": 4000, "launchAutoHide": false, "launchFadeOutDuration": 0, "backgroundColor": "#0B1020" },
+    "SplashScreen": { "launchShowDuration": 4000, "launchAutoHide": false, "launchFadeOutDuration": 0, "backgroundColor": "#2479C8" },
     "StatusBar": { "style": "DARK", "backgroundColor": "#F3F5FA" }
   }
 }

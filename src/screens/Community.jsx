@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'preact/hooks';
 import { createPortal } from 'preact/compat';
-import { TopBar, go, toast } from '../ui.jsx';
+import { TopBar, go, toast, useBackClose } from '../ui.jsx';
 import { fmtShort, istNow, dmy } from '../data/games.js';
 import { Avatar } from '../social/avatars.jsx';
 import { Sheet } from '../social/Sheet.jsx';
-import { me, allPosts, visible, postedToday, canEdit, canDelete, createPost, editPost, deletePost, addPick, validSets, MAX_SETS, liked, toggleLike, likeCount, savedIds, toggleSave, followingOf, toggleFollow, blockedOf, toggleBlock, hidePost, reportPost, REPORT_REASONS, winStats, evalPost, userInfo } from '../social/store.js';
+import { me, allPosts, visible, postedToday, canEdit, canDelete, createPost, editPost, deletePost, addPick, validSets, MAX_SETS, liked, toggleLike, likeCount, savedIds, toggleSave, followingOf, toggleFollow, blockedOf, toggleBlock, hidePost, reportPost, REPORT_REASONS, winStats, evalPost, userInfo, hasNewFollowing, markFollowingSeen } from '../social/store.js';
 
 export const useSocial = () => { const [, s] = useState(0); useEffect(() => { const f = () => s((n) => n + 1); addEventListener('nk-social', f); return () => removeEventListener('nk-social', f); }, []); };
 
@@ -23,6 +23,7 @@ function ReportSheet({ p, onClose }) {
   );
 }
 function PostMenu({ p, name, anchor, onClose, onReport }) {
+  useBackClose(onClose);
   const blocked = blockedOf().includes(p.uid);
   const copy = async () => { try { await navigator.clipboard.writeText(p.sets.join(' ')); toast('Copied'); } catch (e) { /* ignore */ } onClose(); };
   return createPortal(
@@ -111,6 +112,7 @@ export function Community() {
   const [tab, setTab] = useState('all');
   const [comp, setComp] = useState(null);
   const fl = followingOf();
+  const [newF] = useState(hasNewFollowing());
   const list = visible(allPosts()).filter((p) => tab === 'all' || fl.includes(p.uid));
   void me();
   return (
@@ -119,7 +121,7 @@ export function Community() {
       <div class="qhead"><h2>Community</h2><span class="meta">Share your predictions</span></div>
       <div class="qtabs" role="tablist">
         <button class={tab === 'all' ? 'qtab on' : 'qtab'} onClick={() => setTab('all')}>All</button>
-        <button class={tab === 'following' ? 'qtab on' : 'qtab'} onClick={() => setTab('following')}>Following</button>
+        <button class={tab === 'following' ? 'qtab on' : 'qtab'} onClick={() => { setTab('following'); markFollowingSeen(); }}>Following{tab !== 'following' && newF && <i class="tdot" />}</button>
       </div>
       <div class="qwrap">
         {list.length === 0 && <div class="qpanel"><div class="empty">{tab === 'following' ? 'Follow players to see their posts here.' : 'No posts yet.'}</div></div>}
